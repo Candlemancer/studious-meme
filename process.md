@@ -74,5 +74,26 @@ May add a box and whisker chart of our summary statistics.
 
 May add a pie chart of wins and losses.
 
-# Project Schedule
+Have some default groups of monsters and/or players that you could use to run simulations with. (Should make grading and testing easier, anyhow.)
 
+Get pictures for the monsters and allow the user to have pictures for their players, we can use the pictures on their group sidebar.
+
+# Project Schedule
+To be finished by Nov 16:
+* Get a good start on how to implement simulation and store the resulting data
+* Get user input of party
+* Get user input of monsters
+* Display monster/player sidebars
+
+To be finished by Nov 23:
+* Have fully functioning simulation
+* Display summary statistics
+* This week has a little less stuff because it's Thanksgiving
+
+To be finished by Nov 30:
+* Monster comparison charts with brushing and linking
+* Summary statistic charts
+
+To be finished by Dec 6:
+* Polish layout of website (shrinking/expanding)
+* Wiggle room if we got behind
