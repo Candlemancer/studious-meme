@@ -130,6 +130,8 @@ As mentioned in the Bar Chart-enning section, bar charts are great for showing q
 
 ![Sketch 3](https://github.com/Candlemancer/studious-meme/blob/master/images/proposalSketch3.pdf)
 
+_Grading Note:_ They say a picture is worth a thousand words, and we're a couple thousand words over budget. I've decided to cut some of the sketching work to keep this a reasonable size. The images I decided to cut would just be depictions of the alternative prototypes, and it seems silly to mock those up after we've already decided on a final design.
+
 # Must-Have Features
 As the project is broken up into two primary parts, I'll mimic that in the features.
 
