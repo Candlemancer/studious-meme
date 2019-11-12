@@ -21,6 +21,9 @@ This is a tool developed to assist Dungeon Masters to create appropriately chall
 # Data Processing
 
 # Visualization Design
+![Did I get the url right?](https://github.com/Candlemancer/studious-meme/blob/master/images/proposalSketch1.pdf)
+![Once more](https://github.com/Candlemancer/studious-meme/blob/master/images/proposalSketch2.pdf)
+![And the last I made](https://github.com/Candlemancer/studious-meme/blob/master/images/proposalSketch3.pdf)
 
 # Must-Have Features
 As the project is broken up into two primary parts, I'll mimic that in the features.
