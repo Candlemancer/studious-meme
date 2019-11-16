@@ -1,0 +1,1 @@
+let party = new Party();
