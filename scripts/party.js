@@ -22,6 +22,12 @@ class Party {
             'Wizard'
         ];
 
+        // create a div at the top where party members will be displayed
+        this.membersDiv = this.partyDiv
+            .append('div')
+            .attr('id', 'displayMembers')
+        ;
+
         // create button to add a party member
         this.partyDiv.append('button')
             .attr('type', 'button')
@@ -133,7 +139,6 @@ class Party {
         character['WIS'] = document.getElementById('WIS').value;
         character['INT'] = document.getElementById('INT').value;
         character['CHA'] = document.getElementById('CHA').value;
-        console.log(character);
         // save that object in this.partyMemberList
         this.partyMemberList.push(character);
         // remove the form elements, add in addPartyMember button
@@ -145,6 +150,38 @@ class Party {
             .attr('id', 'addPartyMember')
             .text('Add Party Member')
             .on('click', a => this.displayAnotherMemberForm())
+        ;
+        // display all the members of the group
+        this.updatePartyMembersDisplay();
+    }
+
+    updatePartyMembersDisplay() {
+        // add current party composition
+        let divWithData = this.membersDiv.selectAll('div .member')
+            .data(this.partyMemberList)
+        ;
+        // remove anyone who was deleted
+        divWithData.exit().remove();
+        // add anyone who needs added
+        let groups = divWithData.enter()
+            .append('div')
+            .attr('class', 'member')
+        ;
+        groups.append('h3')
+            .text(m => `${m.Name} the ${m.Class}`)
+        ;
+        groups.append('p')
+            .text(m => `CON: ${m.CON},  STR: ${m.STR},  DEX: ${m.DEX},  WIS: ${m.WIS},  INT: ${m.INT},  CHA: ${m.CHA}`)
+        ;
+        groups.append('button')
+            .text('Remove')
+            .attr('class', 'removeButton')
+            .on('click', m => {
+                let sectionToRemove = d3.event.target.parentNode;
+                let memberToRemove = sectionToRemove.childNodes[0].__data__;
+                this.partyMemberList = this.partyMemberList.filter(m => m.Name !== memberToRemove.Name && m.Class != memberToRemove.Class);
+                sectionToRemove.parentNode.removeChild(sectionToRemove);
+            })
         ;
     }
 }
