@@ -35,3 +35,13 @@
 input, select {
     display: block;
 }
+
+.left-col {
+    width: 50%;
+    float: left;
+}
+
+.right-col {
+    width: 50%;
+    float: right;
+}
