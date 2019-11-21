@@ -55,8 +55,8 @@ class Monsters {
 
         // append svg to bigGraphColumn
         bigGraphColumn.append('svg')
-            .attr('width', (this.svgBounds.width / 2) - this.margin.left - this.margin.right)
-            .attr('height', this.svgBounds.height - this.margin.top - this.margin.bottom)
+            .attr('width', this.svgBounds.width / 2)
+            .attr('height', this.svgBounds.height)
             .attr('id', 'bigGraphSVG')
         ;
         // append selects with appropriate options for x-axis and y-axis
@@ -97,8 +97,8 @@ class Monsters {
         // I might actually want a different svg for each chart?
         // idk, I'll figure that out later
         smallMultiplesColumn.append('svg')
-            .attr('width', (this.svgBounds.width / 2) - this.margin.left - this.margin.right)
-            .attr('height', this.svgBounds.height - this.margin.top - this.margin.bottom)
+            .attr('width', this.svgBounds.width / 2)
+            .attr('height', this.svgBounds.height)
             .attr('id', 'smallMultiplesSVG')
         ;
         // append selects with appropriate options for partitions
@@ -132,6 +132,7 @@ class Monsters {
         let partitionValue = document.getElementById('pAxisSelect').value;
         if (this.axisOptions.map(v => v.json).includes(changedValue)) {
             // not changing partition, big chart needs updated as well
+            let bigGraphSVG = d3.select('#bigGraphSVG');
             let bigXAxis = d3.scaleLinear()
                 .range([0, (this.svgBounds / 2) - this.margin.left - this.margin.right])
                 .domain([d3.min(
@@ -148,7 +149,10 @@ class Monsters {
                     this.monsters.map(m => m.attributes[yAxisValue])
                 )+1])
             ;
-
+            // add x-axis
+            bigGraphSVG.append('g')
+                .attr('class', 'x-axis')
+                .attr('transform', 'translate')
         }
         // always update the small multiples
     }
