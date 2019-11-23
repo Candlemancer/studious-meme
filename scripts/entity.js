@@ -1,18 +1,18 @@
 
 class Entity {
-  name;
-  currentHP;
-  maxHP;
-  armorClass;
-  attributes;
-  attackDice = {
-    d4: 0,
-    d6: 0,
-    d8: 0,
-    d10: 0,
-    d12: 0,
-  };
-  proficiencyBonus;
+  // name;
+  // currentHP;
+  // maxHP;
+  // armorClass;
+  // attributes;
+  // attackDice = {
+  //   d4: 0,
+  //   d6: 0,
+  //   d8: 0,
+  //   d10: 0,
+  //   d12: 0,
+  // };
+  // proficiencyBonus;
 
   constructor(entityData) {
     this.name = entityData.name || entityData["Name"];
@@ -40,6 +40,13 @@ class Entity {
         wis: Math.floor((entityData['WIS'] - 10) / 2),
         cha: Math.floor((entityData['CHA'] - 10) / 2),
       };
+    this.attackDice = {
+      d4: 0,
+      d6: 0,
+      d8: 0,
+      d10: 0,
+      d12: 0,
+    };
     this.attackDice.d6 += 2;
 
     this.proficiencyBonus = 4; // TODO
