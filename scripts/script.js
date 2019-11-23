@@ -1,8 +1,8 @@
 let party = new Party();
-let monsterList;
+let monsters;
 
 d3.json('data/monsters.json').then(function(data){
-    monsterList = new Monsters(data);
+    monsters = new Monsters(data);
 });
 
 party.addDefaultParty();
@@ -16,16 +16,9 @@ function simulateBattle() {
     for (var i = 0; i < NUM_MONSTERS; ++i)
     {
         let index = Math.floor(Math.random() * 799);
-        let m = monsterList.monsters[index];
 
-        // TODO: Figure out why sometimes this happens.
-        if (m == undefined) {
-            --i;
-            continue;
-        }
-
-        randomMonsters.push(m);
-        // console.log("added monster", index, ":", m);
+        monsterRoster.push(monsters.monsters[index]);
+        console.log("added monster", index, ":", monsters.selectedMonsters[index]);
     }
     monsterRoster = randomMonsters.map(m => new Entity(m));
 

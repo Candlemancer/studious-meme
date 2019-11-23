@@ -330,7 +330,7 @@ class Monsters {
 
     generateTable(table, data) {
         for (let monster of data) {
-            console.log(monster);
+            // console.log(monster);
             let row = table.insertRow();
             for (let attr in monster) {
                 if (this.tableAttributes.map(v => v.json).includes(attr)){
@@ -353,4 +353,6 @@ class Monsters {
     // didn't consider what to do about all the overlapping data...
     // especially considering how you click the table for a selection...
     // maybe work that out on tuesday, if Jonathan is still around
+
+    // addDefaultMonsters() {}
 }
