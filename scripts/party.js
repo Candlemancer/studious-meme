@@ -142,7 +142,7 @@ class Party {
     takeInput() {
         // take the stuff from the input elements, create an object with them
         let character = {};
-        character['name'] = document.getElementById('name').value;
+        character['Name'] = document.getElementById('name').value;
         character['Class'] = document.getElementById('classSelect').value;
         character['CON'] = document.getElementById('CON').value;
         character['STR'] = document.getElementById('STR').value;
