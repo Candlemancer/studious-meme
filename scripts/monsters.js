@@ -362,7 +362,7 @@ class Monsters {
      */
     generateTable(table, data) {
         for (let monster of data) {
-            console.log(monster);
+            // console.log(monster);
             let row = table.insertRow();
             for (let attr in monster) {
                 if (this.tableAttributes.map(v => v.json).includes(attr)){

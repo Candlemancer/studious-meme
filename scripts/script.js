@@ -4,10 +4,10 @@ let party = new Party();
 party.addDefaultParty();
 
 // Setup the monster panel
-let monsterList;
+let monsterPanel;
 
 d3.json('data/monsters.json').then(function(data){
-    monsterList = new Monsters(data);
+    monsterPanel = new Monsters(data);
 });
 
 // Setup the simulation panel
@@ -40,15 +40,17 @@ function getRandomMonsters()
     var randomMonsters = [];
     for (var i = 0; i < NUM_MONSTERS; ++i) {
         let index = Math.floor(Math.random() * 799);
-        let m = monsterList.monsters[index];
+        let m = monsterPanel.monsters[index]
 
         // TODO: Figure out why sometimes this happens.
         if (m == undefined) {
-        --i;
-        continue;
+            --i;
+            continue;
         }
 
         randomMonsters.push(m);
-        // console.log("added monster", index, ":", m);
+        // console.log("added monster", index, ":", monsters.selectedMonsters[index]);
     }
+
+    return randomMonsters;
 }
