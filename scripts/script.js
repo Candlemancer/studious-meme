@@ -11,16 +11,18 @@ function simulateBattle() {
 
     let playerRoster = party.getPartyMembers().map(p => new Entity(p))
 
-    var monsterRoster = [];
-    for (var i = 0; i < 5; ++i)
+    const NUM_MONSTERS = 10;
+    var randomMonsters = [];
+    for (var i = 0; i < NUM_MONSTERS; ++i)
     {
         let index = Math.floor(Math.random() * 799);
+
         monsterRoster.push(monsters.monsters[index]);
         console.log("added monster", index, ":", monsters.selectedMonsters[index]);
     }
-    monsterRoster = monsterRoster.map(m => new Entity(m));
+    monsterRoster = randomMonsters.map(m => new Entity(m));
 
-    console.log("Preparing fight between ", playerRoster, " and ", monsterRoster);
+    // console.log("Preparing fight between ", playerRoster, " and ", monsterRoster);
 
     var sim = new simulator(simPanel, playerRoster, monsterRoster);
     sim.simulate(500);

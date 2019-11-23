@@ -22,6 +22,10 @@ class simulator {
     }
 
     this.summary.turns = 0;
+
+    this.summary.avgTurns = 0.0;
+
+    this.summary.runtime = "0 ms";
   }
 
   rolld(dieSize) {
@@ -46,10 +50,12 @@ class simulator {
     }
     var endTime = Date.now();
 
+    this.summary.avgTurns = this.summary.turns / runs;
+
     this.summary.runtime = endTime - startTime + " ms";
     this.panel.updateSimulationData(this.summary);
 
-    console.log(this.summary);
+    // console.log(this.summary);
   }
 
   fight() {
