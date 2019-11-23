@@ -19,9 +19,14 @@ class Monsters {
             // { json: "challenge-rating", "option-text": "Challenge Rating" } it's not in attributes, makes things a bit trickier
         ];
         this.partitionOptions = [
-            { json: "alignment", "option-text": "Alignment" },
+            { json: "monster-type", "option-text": "Monster Type" },
             { json: "monster-size", "option-text": "Monster Size" },
-            { json: "monster-type", "option-text": "Monster Type" }
+            { json: "alignment", "option-text": "Alignment" },
+        ];
+        this.tableAttributes = [
+            { json: 'monster-name', 'option-text': 'Monster Name' },
+            ...this.partitionOptions,
+            ...this.axisOptions
         ];
 
         this.margin = {top: 30, right: 20, bottom: 30, left: 20}
@@ -33,6 +38,7 @@ class Monsters {
         this.monstersSelectDiv = d3.select('#monsters')
             .append('div')
             .attr('id', 'monstersSelectDiv')
+            .style('width', '100%')
         ;
 
         let svgBounds = d3.select('.collapsible').node().getBoundingClientRect();
@@ -204,6 +210,12 @@ class Monsters {
             .attr('cx', m => xScale(m.attributes[xAxisValue]))
             .attr('cy', m => (this.screenWidth / 2) - (yScale(m.attributes[yAxisValue])+xAxisHeight))
             .on('click', d => this.selectMonster())
+            .style('fill', m => {
+                if (this.selectedMonsters.includes(m)){
+                    return 'red';
+                }
+                return 'black';
+            })
         ;
     }
 
@@ -275,6 +287,13 @@ class Monsters {
                 .attr('r', '3')
                 .attr('cx', m => xScale(m.attributes[xAxisValue]))
                 .attr('cy', m => svgWidth - yScale(m.attributes[yAxisValue])-wiggleRoom.bottom)
+                .on('click', d => selectMonster())
+                .style('fill', m => {
+                    if (this.selectedMonsters.includes(m)) {
+                        return 'red';
+                    }
+                    return 'black';
+                })
             ;
         }
     }
@@ -282,17 +301,59 @@ class Monsters {
     selectMonster() {
         let selectedCircle = d3.event.target;
         selectedCircle.style.fill = 'red';
-        // gotta figure out how to link it in the other view
+        // gotta figure out how to link it in the other view without having to rebuild the whole other view...
         let selectedMonster = d3.event.target.__data__;
         this.selectedMonsters.push(selectedMonster);
         this.displaySelectedMonsters()
     }
 
     displaySelectedMonsters() {
-        console.log('display Selected Monsters', this.selectedMonsters)
+        document.getElementById('monstersSelectDiv').innerHTML = '';
+        if (this.selectedMonsters) {
+            let table = document.createElement('table');
+            document.getElementById('monstersSelectDiv').appendChild(table);
+            this.generateTable(table, this.selectedMonsters);
+            this.generateTableHead(table, this.tableAttributes.map(v => v['option-text']));
+        }
     }
+
+    generateTableHead(table, data) {
+        let thead = table.createTHead();
+        let row = thead.insertRow();
+        for (let key of data) {
+            let th = document.createElement('th');
+            let text = document.createTextNode(key)
+            th.appendChild(text);
+            row.appendChild(th);
+        }
+    }
+
+    generateTable(table, data) {
+        for (let monster of data) {
+            console.log(monster);
+            let row = table.insertRow();
+            for (let attr in monster) {
+                if (this.tableAttributes.map(v => v.json).includes(attr)){
+                    let cell = row.insertCell();
+                    let text = document.createTextNode(monster[attr]);
+                    cell.appendChild(text);
+                } else if (attr === 'attributes') {
+                    for (let score in monster[attr]) {
+                        if (this.tableAttributes.map(v => v.json).includes(score)) {
+                            let cell = row.insertCell();
+                            let text = document.createTextNode(monster.attributes[score]);
+                            cell.appendChild(text);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // didn't consider what to do about all the overlapping data... 
+    // especially considering how you click the table for a selection...
+    // maybe work that out on tuesday, if Jonathan is still around
 
     addDefaultMonsters() {
 
     }
-}
