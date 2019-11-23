@@ -18,56 +18,9 @@ class Monsters {
             // { json: "challenge-rating", "option-text": "Challenge Rating" } it's not in attributes, makes things a bit trickier
         ];
         this.partitionOptions = [
-            { json: "alignment",
-              "option-text": "Alignment",
-              "options": [
-                  "Lawful Good",
-                  "Neutral Good",
-                  "Chaotic Good",
-                  "Lawful Neutral",
-                  "Neutral",
-                  "Chaotic Neutral",
-                  "Lawful Evil",
-                  "Neutral Evil",
-                  "Chaotic Evil",
-                  "Any Evil Alignment",
-                  "Any Non-Good Alignment",
-                  "Any Non-Lawful Alignment",
-                  "Any Chaotic Alignment",
-                  "Unaligned",
-                  "Any Alignment"
-              ]
-            },
-            { json: "monster-size",
-              "option-text": "Monster Size",
-              "options": [
-                  "Tiny",
-                  "Small",
-                  "Medium",
-                  "Large",
-                  "Huge",
-                  "Gargantuan"
-              ]
-            },
-            { json: "monster-type", 
-              "option-text": "Monster Type",
-              "options": [
-                  "Humanoid",
-                  "Aberration",
-                  "Monstrosity",
-                  "Fiend",
-                  "Dragon",
-                  "Undead",
-                  "Ooze",
-                  "Elemental",
-                  "Beast",
-                  "Construct",
-                  "Fey",
-                  "Plant",
-                  "Giant",
-                  "Celestial"
-              ]
-            }
+            { json: "alignment", "option-text": "Alignment" },
+            { json: "monster-size", "option-text": "Monster Size" },
+            { json: "monster-type", "option-text": "Monster Type" }
         ];
 
         this.margin = {top: 30, right: 20, bottom: 30, left: 20}
@@ -81,8 +34,8 @@ class Monsters {
             .attr('id', 'monstersSelectDiv')
         ;
 
-        this.svgBounds = d3.select('.collapsible').node().getBoundingClientRect();
-        this.svgBounds.height = 500
+        let svgBounds = d3.select('.collapsible').node().getBoundingClientRect();
+        this.screenWidth = svgBounds.width
 
         this.createMonsterGraphs();
 
@@ -103,8 +56,8 @@ class Monsters {
 
         // append svg to bigGraphColumn
         bigGraphColumn.append('svg')
-            .attr('width', this.svgBounds.width / 2)
-            .attr('height', this.svgBounds.height)
+            .attr('width', this.screenWidth / 2)
+            .attr('height', this.screenWidth / 2)
             .attr('id', 'bigGraphSVG')
         ;
         // append selects with appropriate options for x-axis and y-axis
@@ -162,6 +115,7 @@ class Monsters {
             .attr('value', o => o.json)
             .text(o => o["option-text"])
         ;
+        document.getElementById('pAxisSelect').value = 'monster-size';
 
         // trigger updateCharts
         this.updateCharts();
@@ -188,23 +142,23 @@ class Monsters {
     updateBigChart() {
         let xAxisValue = document.getElementById('xAxisSelect').value;
         let yAxisValue = document.getElementById('yAxisSelect').value;
-        let xAxisHeight = 20;
+        let xAxisHeight = 22;
         let yAxisWidth = 20;
 
         let bigGraphSVG = d3.select('#bigGraphSVG');
         // remove what's there so we can make the new chart
         document.getElementById('bigGraphSVG').innerHTML = '';
 
-        let bigXScale = d3.scaleLinear()
-            .range([yAxisWidth, (this.svgBounds.width / 2) - this.margin.left - this.margin.right])
+        let xScale = d3.scaleLinear()
+            .range([yAxisWidth, (this.screenWidth / 2) - this.margin.left - this.margin.right])
             .domain([d3.min(
                 this.monsters.map(m => m.attributes[xAxisValue])
             )-1, d3.max(
                 this.monsters.map(m => m.attributes[xAxisValue])
             )+1])
         ;
-        let bigYScale = d3.scaleLinear()
-            .range([0, (this.svgBounds.height) - this.margin.top - this.margin.bottom])
+        let yScale = d3.scaleLinear()
+            .range([0, (this.screenWidth / 2) - this.margin.top - this.margin.bottom])
             .domain([d3.min(
                 this.monsters.map(m => m.attributes[yAxisValue])
             )-1, d3.max(
@@ -212,13 +166,13 @@ class Monsters {
             )+1])
         ;
         // add x-axis
-        let bigXAxis = d3.axisBottom(bigXScale)
+        let xAxis = d3.axisBottom(xScale)
             .tickFormat((d,i) => d)
         ;
         bigGraphSVG.append('g')
             .attr('class', 'x-axis')
-            .attr('transform', `translate(0, ${this.svgBounds.height-xAxisHeight})`)
-            .call(bigXAxis)
+            .attr('transform', `translate(0, ${(this.screenWidth / 2)-xAxisHeight})`)
+            .call(xAxis)
             .selectAll('text')
             .style('text-anchor', 'end')
             .attr('dx', '-.8em')
@@ -226,13 +180,13 @@ class Monsters {
             .attr('transform', 'rotate(-65)');
         ;
         // add y-axis
-        let bigYAxis = d3.axisLeft(bigYScale)
+        let yAxis = d3.axisLeft(yScale)
             .tickFormat((d,i) => d)
         ;
         bigGraphSVG.append('g')
             .attr('class', 'y-axis')
-            .attr('transform', `translate(${yAxisWidth}, ${this.svgBounds.height-xAxisHeight}) scale(1,-1)`)
-            .call(bigYAxis)
+            .attr('transform', `translate(${yAxisWidth}, ${(this.screenWidth / 2)-xAxisHeight}) scale(1,-1)`)
+            .call(yAxis)
             .selectAll('text')
             .style('text-anchor', 'end')
             .attr('dx', '0em')
@@ -245,9 +199,9 @@ class Monsters {
             .enter()
             .append('circle')
             .attr('class', 'bigGraphCircle')
-            .attr('r', '3')
-            .attr('cx', m => bigXScale(m.attributes[xAxisValue]))
-            .attr('cy', m => this.svgBounds.height - (bigYScale(m.attributes[yAxisValue])+xAxisHeight))
+            .attr('r', '4')
+            .attr('cx', m => xScale(m.attributes[xAxisValue]))
+            .attr('cy', m => (this.screenWidth / 2) - (yScale(m.attributes[yAxisValue])+xAxisHeight))
             .on('click', d => this.selectMonster())
         ;
     }
@@ -255,27 +209,85 @@ class Monsters {
     updateSmallMultiples() {
         let xAxisValue = document.getElementById('xAxisSelect').value;
         let yAxisValue = document.getElementById('yAxisSelect').value;
-        let svgWidth = (this.svgBounds.width / 6)-10;
+        let svgWidth = (this.screenWidth / 6)-10;
         let partitionValue = document.getElementById('pAxisSelect').value;
-        let partitions = this.partitionOptions.find(opt => opt.json === partitionValue).options;
+        let wiggleRoom = {
+            bottom: 25,
+            top: 8,
+            side: 2
+        }
+        let nestedData = d3.nest()
+            .key(k => k[partitionValue])
+            .entries(this.monsters)
+        ;
         // always update the small multiples
         document.getElementById('smallMultiplesDivForSVGs').innerHTML = '';
-        // append the correct number of charts
-        d3.select('#smallMultiplesDivForSVGs')
-            .selectAll('svg')
-            .data(partitions)
-            .enter()
-            .append('svg')
-            .attr('width', svgWidth)
-            .attr('height', svgWidth)
-            .attr('class', v => `${v} multiple`)
+        // make the scales and axes
+        let xScale = d3.scaleLinear()
+            .range([0, svgWidth - (2 * wiggleRoom.side)])
+            .domain([d3.min(
+                this.monsters.map(m => m.attributes[xAxisValue])
+            )-1, d3.max(
+                this.monsters.map(m => m.attributes[xAxisValue])
+            )+1])
         ;
+        let yScale = d3.scaleLinear()
+            .range([0, svgWidth - wiggleRoom.bottom - wiggleRoom.top ])
+            .domain([d3.min(
+                this.monsters.map(m => m.attributes[yAxisValue])
+            )-1, d3.max(
+                this.monsters.map(m => m.attributes[yAxisValue])
+            )+1])
+        ;
+        let xAxis = d3.axisBottom(xScale)
+            .tickFormat('')
+        ;
+        let yAxis = d3.axisLeft(yScale)
+            .tickFormat('')
+        ;
+        // append the correct number of charts
+        for (let data of nestedData) {
+            let svg = d3.select('#smallMultiplesDivForSVGs')
+                .append('svg')
+                .attr('width', svgWidth)
+                .attr('height', svgWidth)
+            ;
+            svg.append('g')
+                .attr('class', 'x-axis')
+                .attr('transform', `translate(${wiggleRoom.side}, ${svgWidth-wiggleRoom.bottom})`)
+                .call(xAxis)
+            ;
+            svg.append('g')
+                .attr('class', 'y-axis')
+                .attr('transform', `translate(${wiggleRoom.side}, ${wiggleRoom.top})`)
+                .call(yAxis)
+            ;
+            svg.append('text')
+                .text(`${data.key}`)
+                .attr('x', `35`)
+                .attr('y', `${svgWidth - 5}`)
+            ;
+            svg.selectAll('circle')
+                .data(data.values)
+                .enter()
+                .append('circle')
+                .attr('r', '3')
+                .attr('cx', m => xScale(m.attributes[xAxisValue]))
+                .attr('cy', m => svgWidth - yScale(m.attributes[yAxisValue])-wiggleRoom.bottom)
+            ;
+        }
     }
 
     selectMonster() {
         let selectedCircle = d3.event.target;
+        selectedCircle.style.fill = 'red';
+        // gotta figure out how to link it in the other view
         let selectedMonster = d3.event.target.__data__;
         this.selectedMonsters.push(selectedMonster);
-        console.log(this.selectedMonsters);
+        this.displaySelectedMonsters()
+    }
+
+    displaySelectedMonsters() {
+        console.log('display Selected Monsters', this.selectedMonsters)
     }
 }
