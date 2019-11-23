@@ -6,6 +6,7 @@ class Monsters {
         // read in data from file
         this.monsters = monsterData;
         this.selectedMonsters = [];
+
         this.axisOptions = [
             { json: "armor-class", "option-text": "AC" },
             { json: "hit-points", "option-text": "HP" },
@@ -352,4 +353,7 @@ class Monsters {
     // didn't consider what to do about all the overlapping data... 
     // especially considering how you click the table for a selection...
     // maybe work that out on tuesday, if Jonathan is still around
-}
+
+    addDefaultMonsters() {
+
+    }

@@ -49,3 +49,8 @@ input, select {
 table {
     border-spacing: 15px;
 }
+
+.simResults {
+  float: left;
+  width: 33%;
+}
