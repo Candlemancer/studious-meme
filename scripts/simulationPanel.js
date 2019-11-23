@@ -1,19 +1,19 @@
 
-
+/**
+ * Class used to manage the panel showing simulation information.
+ */
 class SimulationPanel {
 
+    /**
+     * Constructor for the SimulationPanel class
+     */
     constructor() {
         this.leftPanel = d3.select("#simLeft");
         this.midPanel = d3.select("#simMid");
         this.rightPanel = d3.select("#simRight");
 
-        // d3.select("#simulation")
-        //   .append("button")
-        //   .text("Fight!")
-        //   .attr("onclick", "simulateBattle()");
         this.chartWidth = 400;
         this.chartHeight = 300;
-
 
         this.leftPanel.append("div")
             .attr("class", "roster");
@@ -46,6 +46,9 @@ class SimulationPanel {
         this.addStatChart(this.rightPanel, "chaChart", "CHA Modifier");
     }
 
+    /**
+     * Adds an svg element to the panel that can be later filled with info.
+     */
     addStatChart(selection, className, title)
     {
         selection.append("svg")
@@ -59,17 +62,25 @@ class SimulationPanel {
             .text(title);
     }
 
-
+    /**
+     * Updates the data on the left representing the players.
+     */
     updatePlayerData(playerData) {
         // console.log("Updating player info...");
         this.updateTeamData(this.leftPanel, playerData);
     }
 
+    /**
+     * Updates the data on the right representing the monsters.
+     */
     updateMonsterData(monsterData) {
         // console.log("Updating monster info...");
         this.updateTeamData(this.rightPanel, monsterData);
     }
 
+    /**
+     * Updates the data in the center representing overall simulation results.
+     */
     updateSimulationData(simData) {
         // console.log("Updating simulation info...");
 
@@ -108,6 +119,10 @@ class SimulationPanel {
         // .text("Wins: " + simData.wins.players);
     }
 
+    /**
+     * Generic function that updates data for players or monsters based on the
+     * data passed in as arguments.
+     */
     updateTeamData(selection, entityData) {
 
         // console.log(entityData);
@@ -143,6 +158,9 @@ class SimulationPanel {
         //     .attr("height", d => d.maxHP);
     }
 
+    /**
+     * Draws a (very) basic bar chart based on the data provided.
+     */
     drawBarAttribute(selection, data, maxValue, className, attributeName, isAttr = false) {
         let names = data.map(e => e.name);
 

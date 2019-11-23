@@ -1,3 +1,7 @@
+
+/**
+ * Class used to manage and visualize the monster panel data.
+ */
 class Monsters {
     /**
      * Constructor for monsters panel
@@ -49,6 +53,9 @@ class Monsters {
         this.createMonsterSelect();
     }
 
+    /**
+     * Draws the big and small graphs on the Monster Panel.
+     */
     createMonsterGraphs() {
         let bigGraphColumn = this.monsterGraphsDiv
             .append('div')
@@ -128,11 +135,18 @@ class Monsters {
         this.updateCharts();
     }
 
+    /**
+     * Visualizes the currently selected monsters in a table.
+     * TODO.
+     */
     createMonsterSelect() {
         // I think we'll display the selected monsters in a table
         // name | stat | stat | stat | etc...
     }
 
+    /**
+     * Redraw the charts when the data changes.
+     */
     updateCharts() {
         if (d3.event) {
             let changedValue = d3.event.target.value;
@@ -146,6 +160,9 @@ class Monsters {
         }
     }
 
+    /**
+     * Redraw the big chart when the data changes.
+     */
     updateBigChart() {
         let xAxisValue = document.getElementById('xAxisSelect').value;
         let yAxisValue = document.getElementById('yAxisSelect').value;
@@ -219,6 +236,9 @@ class Monsters {
         ;
     }
 
+    /**
+     * Redraw the small charts when the data changes.
+     */
     updateSmallMultiples() {
         let xAxisValue = document.getElementById('xAxisSelect').value;
         let yAxisValue = document.getElementById('yAxisSelect').value;
@@ -298,6 +318,9 @@ class Monsters {
         }
     }
 
+    /**
+     * Handler for selecting monsters on the charts.
+     */
     selectMonster() {
         let selectedCircle = d3.event.target;
         selectedCircle.style.fill = 'red';
@@ -307,6 +330,9 @@ class Monsters {
         this.displaySelectedMonsters()
     }
 
+    /**
+     * Build up the table for showing selected monsters.
+     */
     displaySelectedMonsters() {
         document.getElementById('monstersSelectDiv').innerHTML = '';
         if (this.selectedMonsters) {
@@ -317,6 +343,9 @@ class Monsters {
         }
     }
 
+    /**
+     * Generate header for selected monsters table.
+     */
     generateTableHead(table, data) {
         let thead = table.createTHead();
         let row = thead.insertRow();
@@ -328,6 +357,9 @@ class Monsters {
         }
     }
 
+    /**
+     * Generate the table that holds selected monsters.
+     */
     generateTable(table, data) {
         for (let monster of data) {
             // console.log(monster);
@@ -353,6 +385,4 @@ class Monsters {
     // didn't consider what to do about all the overlapping data...
     // especially considering how you click the table for a selection...
     // maybe work that out on tuesday, if Jonathan is still around
-
-    // addDefaultMonsters() {}
 }
