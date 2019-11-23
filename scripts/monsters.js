@@ -6,6 +6,7 @@ class Monsters {
         // read in data from file
         this.monsters = monsterData;
         this.selectedMonsters = [];
+
         this.axisOptions = [
             { json: "armor-class", "option-text": "AC" },
             { json: "hit-points", "option-text": "HP" },
@@ -289,5 +290,9 @@ class Monsters {
 
     displaySelectedMonsters() {
         console.log('display Selected Monsters', this.selectedMonsters)
+    }
+
+    addDefaultMonsters() {
+
     }
 }

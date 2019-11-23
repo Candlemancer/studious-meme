@@ -6,22 +6,30 @@
         <link rel="stylesheet" href="style.css" />
 
         <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="scripts/entity.js" defer></script>
+        <script src="scripts/collapse.js" defer></script>
+        <script src="scripts/party.js" defer></script>
+        <script src="scripts/monsters.js" defer></script>
+        <script src="scripts/simulator.js" defer></script>
+        <script src="scripts/simulationPanel.js" defer></script>
+        <script src="scripts/script.js" defer></script>
     </head>
     <body>
         <button type="button" class="collapsible">Party</button>
         <div class="content" id="party">
         </div>
         <button type="button" class="collapsible">Simulation</button>
-        <div class="content">
-            <p>Simulation words</p>
+        <div class="content" id="simulation">
+            <button id="beginSimulation" onclick="simulateBattle()">Fight!</button>
+            <div>
+                <div class="simResults" id="simLeft"></div>
+                <div class="simResults" id="simMid"></div>
+                <div class="simResults" id="simRight"></div>
+            </div>
         </div>
         <button type="button" class="collapsible">Monsters</button>
         <div class="content" id="monsters">
         </div>
 
-        <script type="application/javascript" src="scripts/collapse.js"></script>
-        <script type="application/javascript" src="scripts/party.js"></script>
-        <script type="application/javascript" src="scripts/monsters.js"></script>
-        <script type="application/javascript" src="scripts/script.js"></script>
     </body>
 </html>
