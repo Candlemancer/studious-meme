@@ -11,8 +11,8 @@ class Party {
             'Barbarian',
             'Bard',
             'Cleric',
-            'Druid', 
-            'Fighter', 
+            'Druid',
+            'Fighter',
             'Monk',
             'Paladin',
             'Ranger',
@@ -131,7 +131,7 @@ class Party {
     takeInput() {
         // take the stuff from the input elements, create an object with them
         let character = {};
-        character['Name'] = document.getElementById('name').value;
+        character['name'] = document.getElementById('name').value;
         character['Class'] = document.getElementById('classSelect').value;
         character['CON'] = document.getElementById('CON').value;
         character['STR'] = document.getElementById('STR').value;
@@ -184,4 +184,74 @@ class Party {
             })
         ;
     }
+
+    getPartyMembers() {
+      return this.partyMemberList;
+    }
+
+    addPartyMember(member) {
+      // console.log("adding", member)
+      this.partyMemberList.push(member);
+    }
+
+  addDefaultParty() {
+
+    this.addPartyMember({
+      Name: "Barbara",
+      Class: "Barbarian",
+      STR: 20,
+      DEX: 11,
+      CON: 18,
+      INT: 8,
+      WIS: 14,
+      CHA: 10
+    });
+
+    this.addPartyMember({
+      Name: "Claire",
+      Class: "Cleric",
+      STR: 14,
+      DEX: 14,
+      CON: 10,
+      INT: 11,
+      WIS: 16,
+      CHA: 8
+    });
+
+    this.addPartyMember({
+      Name: "Locke",
+      Class: "Warlock",
+      STR: 8,
+      DEX: 16,
+      CON: 10,
+      INT: 14,
+      WIS: 14,
+      CHA: 18
+    });
+
+    this.addPartyMember({
+      Name: "Wiz",
+      Class: "Wizard",
+      STR: 8,
+      DEX: 8,
+      CON: 14,
+      INT: 20,
+      WIS: 16,
+      CHA: 12
+    });
+
+    this.addPartyMember({
+      Name: "Rogue",
+      Class: "Rogue",
+      STR: 12,
+      DEX: 18,
+      CON: 14,
+      INT: 16,
+      WIS: 12,
+      CHA: 18
+    });
+
+    this.updatePartyMembersDisplay();
+  }
+
 }

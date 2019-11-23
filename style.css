@@ -45,3 +45,8 @@ input, select {
     width: 50%;
     float: right;
 }
+
+.simResults {
+  float: left;
+  width: 33%;
+}

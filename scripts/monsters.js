@@ -5,7 +5,7 @@ class Monsters {
     constructor(monsterData) {
         // read in data from file
         this.monsters = monsterData;
-        console.log(this.monsters);
+        // console.log(this.monsters);
         this.axisOptions = [
             { json: "armor-class", "option-text": "AC" },
             { json: "hit-points", "option-text": "HP" },
@@ -155,5 +155,9 @@ class Monsters {
                 .attr('transform', 'translate')
         }
         // always update the small multiples
+    }
+
+    addDefaultMonsters() {
+
     }
 }
