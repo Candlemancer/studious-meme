@@ -5,7 +5,8 @@ class Monsters {
     constructor(monsterData) {
         // read in data from file
         this.monsters = monsterData;
-        // console.log(this.monsters);
+        this.selectedMonsters = [];
+
         this.axisOptions = [
             { json: "armor-class", "option-text": "AC" },
             { json: "hit-points", "option-text": "HP" },
@@ -18,10 +19,11 @@ class Monsters {
             // { json: "challenge-rating", "option-text": "Challenge Rating" } it's not in attributes, makes things a bit trickier
         ];
         this.partitionOptions = [
-            { json: "monster-type", "option-text": "Monster Type" },
+            { json: "alignment", "option-text": "Alignment" },
             { json: "monster-size", "option-text": "Monster Size" },
-            { json: "alignment", "option-text": "Alignment" }
+            { json: "monster-type", "option-text": "Monster Type" }
         ];
+
         this.margin = {top: 30, right: 20, bottom: 30, left: 20}
 
         this.monsterGraphsDiv = d3.select('#monsters')
@@ -33,8 +35,8 @@ class Monsters {
             .attr('id', 'monstersSelectDiv')
         ;
 
-        this.svgBounds = d3.select('.collapsible').node().getBoundingClientRect();
-        this.svgBounds.height = 500
+        let svgBounds = d3.select('.collapsible').node().getBoundingClientRect();
+        this.screenWidth = svgBounds.width
 
         this.createMonsterGraphs();
 
@@ -50,13 +52,13 @@ class Monsters {
         let smallMultiplesColumn = this.monsterGraphsDiv
             .append('div')
             .attr('class', 'right-col')
-            .attr('id', 'smallMonsterGraphs')
+            .attr('id', 'smallMonsterGraphsDiv')
         ;
 
         // append svg to bigGraphColumn
         bigGraphColumn.append('svg')
-            .attr('width', this.svgBounds.width / 2)
-            .attr('height', this.svgBounds.height)
+            .attr('width', this.screenWidth / 2)
+            .attr('height', this.screenWidth / 2)
             .attr('id', 'bigGraphSVG')
         ;
         // append selects with appropriate options for x-axis and y-axis
@@ -93,13 +95,9 @@ class Monsters {
             .text(o => o["option-text"])
         ;
 
-        // append svg to smallMultiplesColumn
-        // I might actually want a different svg for each chart?
-        // idk, I'll figure that out later
-        smallMultiplesColumn.append('svg')
-            .attr('width', this.svgBounds.width / 2)
-            .attr('height', this.svgBounds.height)
-            .attr('id', 'smallMultiplesSVG')
+        // append a div in which to put many svgs to smallMultiplesColumn
+        smallMultiplesColumn.append('div')
+            .attr('id', 'smallMultiplesDivForSVGs')
         ;
         // append selects with appropriate options for partitions
         smallMultiplesColumn.append('label')
@@ -118,6 +116,10 @@ class Monsters {
             .attr('value', o => o.json)
             .text(o => o["option-text"])
         ;
+        document.getElementById('pAxisSelect').value = 'monster-size';
+
+        // trigger updateCharts
+        this.updateCharts();
     }
 
     createMonsterSelect() {
@@ -126,35 +128,168 @@ class Monsters {
     }
 
     updateCharts() {
-        let changedValue = d3.event.target.value;
+        if (d3.event) {
+            let changedValue = d3.event.target.value;
+            if (this.axisOptions.map(v => v.json).includes(changedValue)){
+                this.updateBigChart();
+            }
+            this.updateSmallMultiples();
+        } else {
+            this.updateBigChart();
+            this.updateSmallMultiples();
+        }
+    }
+
+    updateBigChart() {
         let xAxisValue = document.getElementById('xAxisSelect').value;
         let yAxisValue = document.getElementById('yAxisSelect').value;
+        let xAxisHeight = 22;
+        let yAxisWidth = 20;
+
+        let bigGraphSVG = d3.select('#bigGraphSVG');
+        // remove what's there so we can make the new chart
+        document.getElementById('bigGraphSVG').innerHTML = '';
+
+        let xScale = d3.scaleLinear()
+            .range([yAxisWidth, (this.screenWidth / 2) - this.margin.left - this.margin.right])
+            .domain([d3.min(
+                this.monsters.map(m => m.attributes[xAxisValue])
+            )-1, d3.max(
+                this.monsters.map(m => m.attributes[xAxisValue])
+            )+1])
+        ;
+        let yScale = d3.scaleLinear()
+            .range([0, (this.screenWidth / 2) - this.margin.top - this.margin.bottom])
+            .domain([d3.min(
+                this.monsters.map(m => m.attributes[yAxisValue])
+            )-1, d3.max(
+                this.monsters.map(m => m.attributes[yAxisValue])
+            )+1])
+        ;
+        // add x-axis
+        let xAxis = d3.axisBottom(xScale)
+            .tickFormat((d,i) => d)
+        ;
+        bigGraphSVG.append('g')
+            .attr('class', 'x-axis')
+            .attr('transform', `translate(0, ${(this.screenWidth / 2)-xAxisHeight})`)
+            .call(xAxis)
+            .selectAll('text')
+            .style('text-anchor', 'end')
+            .attr('dx', '-.8em')
+            .attr('dy', '.15em')
+            .attr('transform', 'rotate(-65)');
+        ;
+        // add y-axis
+        let yAxis = d3.axisLeft(yScale)
+            .tickFormat((d,i) => d)
+        ;
+        bigGraphSVG.append('g')
+            .attr('class', 'y-axis')
+            .attr('transform', `translate(${yAxisWidth}, ${(this.screenWidth / 2)-xAxisHeight}) scale(1,-1)`)
+            .call(yAxis)
+            .selectAll('text')
+            .style('text-anchor', 'end')
+            .attr('dx', '0em')
+            .attr('dy', '.5em')
+            .attr('transform', 'scale(1,-1)')
+        ;
+        // add the dots
+        bigGraphSVG.selectAll('circle')
+            .data(this.monsters)
+            .enter()
+            .append('circle')
+            .attr('class', 'bigGraphCircle')
+            .attr('r', '4')
+            .attr('cx', m => xScale(m.attributes[xAxisValue]))
+            .attr('cy', m => (this.screenWidth / 2) - (yScale(m.attributes[yAxisValue])+xAxisHeight))
+            .on('click', d => this.selectMonster())
+        ;
+    }
+
+    updateSmallMultiples() {
+        let xAxisValue = document.getElementById('xAxisSelect').value;
+        let yAxisValue = document.getElementById('yAxisSelect').value;
+        let svgWidth = (this.screenWidth / 6)-10;
         let partitionValue = document.getElementById('pAxisSelect').value;
-        if (this.axisOptions.map(v => v.json).includes(changedValue)) {
-            // not changing partition, big chart needs updated as well
-            let bigGraphSVG = d3.select('#bigGraphSVG');
-            let bigXAxis = d3.scaleLinear()
-                .range([0, (this.svgBounds / 2) - this.margin.left - this.margin.right])
-                .domain([d3.min(
-                    this.monsters.map(m => m.attributes[xAxisValue])
-                )-1, d3.max(
-                    this.monsters.map(m => m.attributes[xAxisValue])
-                )+1])
-            ;
-            let bigYAxis = d3.scaleLinear()
-                .range([0, (this.svgBounds.height) - this.margin.top - this.margin.bottom])
-                .domain([d3.min(
-                    this.monsters.map(m => m.attributes[yAxisValue])
-                )-1, d3.max(
-                    this.monsters.map(m => m.attributes[yAxisValue])
-                )+1])
-            ;
-            // add x-axis
-            bigGraphSVG.append('g')
-                .attr('class', 'x-axis')
-                .attr('transform', 'translate')
+        let wiggleRoom = {
+            bottom: 25,
+            top: 8,
+            side: 2
         }
+        let nestedData = d3.nest()
+            .key(k => k[partitionValue])
+            .entries(this.monsters)
+        ;
         // always update the small multiples
+        document.getElementById('smallMultiplesDivForSVGs').innerHTML = '';
+        // make the scales and axes
+        let xScale = d3.scaleLinear()
+            .range([0, svgWidth - (2 * wiggleRoom.side)])
+            .domain([d3.min(
+                this.monsters.map(m => m.attributes[xAxisValue])
+            )-1, d3.max(
+                this.monsters.map(m => m.attributes[xAxisValue])
+            )+1])
+        ;
+        let yScale = d3.scaleLinear()
+            .range([0, svgWidth - wiggleRoom.bottom - wiggleRoom.top ])
+            .domain([d3.min(
+                this.monsters.map(m => m.attributes[yAxisValue])
+            )-1, d3.max(
+                this.monsters.map(m => m.attributes[yAxisValue])
+            )+1])
+        ;
+        let xAxis = d3.axisBottom(xScale)
+            .tickFormat('')
+        ;
+        let yAxis = d3.axisLeft(yScale)
+            .tickFormat('')
+        ;
+        // append the correct number of charts
+        for (let data of nestedData) {
+            let svg = d3.select('#smallMultiplesDivForSVGs')
+                .append('svg')
+                .attr('width', svgWidth)
+                .attr('height', svgWidth)
+            ;
+            svg.append('g')
+                .attr('class', 'x-axis')
+                .attr('transform', `translate(${wiggleRoom.side}, ${svgWidth-wiggleRoom.bottom})`)
+                .call(xAxis)
+            ;
+            svg.append('g')
+                .attr('class', 'y-axis')
+                .attr('transform', `translate(${wiggleRoom.side}, ${wiggleRoom.top})`)
+                .call(yAxis)
+            ;
+            svg.append('text')
+                .text(`${data.key}`)
+                .attr('x', `35`)
+                .attr('y', `${svgWidth - 5}`)
+            ;
+            svg.selectAll('circle')
+                .data(data.values)
+                .enter()
+                .append('circle')
+                .attr('r', '3')
+                .attr('cx', m => xScale(m.attributes[xAxisValue]))
+                .attr('cy', m => svgWidth - yScale(m.attributes[yAxisValue])-wiggleRoom.bottom)
+            ;
+        }
+    }
+
+    selectMonster() {
+        let selectedCircle = d3.event.target;
+        selectedCircle.style.fill = 'red';
+        // gotta figure out how to link it in the other view
+        let selectedMonster = d3.event.target.__data__;
+        this.selectedMonsters.push(selectedMonster);
+        this.displaySelectedMonsters()
+    }
+
+    displaySelectedMonsters() {
+        console.log('display Selected Monsters', this.selectedMonsters)
     }
 
     addDefaultMonsters() {
