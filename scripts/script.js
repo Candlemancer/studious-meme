@@ -49,7 +49,7 @@ function getRandomMonsters()
         }
 
         randomMonsters.push(m);
-        // console.log("added monster", index, ":", monsters.selectedMonsters[index]);
+        // console.log("added monster", index, ":", m);
     }
 
     return randomMonsters;
