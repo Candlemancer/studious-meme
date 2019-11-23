@@ -1,6 +1,7 @@
 # Basic Info
 D&D 5e Monster Mashup (Embrace the Bar Chart)\
-[Repository Link](https://github.com/Candlemancer/studious-meme)
+[Repository Link](https://github.com/Candlemancer/studious-meme)\
+[Website Link](https://candlemancer.github.io/studious-meme)
 
 Suzanne Rhodes LaBarge\
 A01853855\
@@ -37,7 +38,7 @@ The major questions we hope to answer are as follows:
     - Are there linchpin members of the party (i.e. if they die, the fight is over)?
 
 # Data
-Data will be sourced from official Wizards of the Coast Dungeons and Dragons Fifth Edition sourcebooks and the Systems Reference Document (SRD) found [here](https://dnd.wizards.com/articles/features/systems-reference-document-srd). Digitizations of this data will be sourced from the official digital toolset for D&D 5e, [D&D Beyond](https://www.dndbeyond.com/monsters). Additional digitizations of the data may be taken from the [Dungeons and Dragons Reddit community](https://www.reddit.com/r/DnD/), though much of that data is also sourced from D&D Beyond.
+Data will be sourced from official Wizards of the Coast Dungeons and Dragons Fifth Edition sourcebooks and the Systems Reference Document (SRD) found [here](https://dnd.wizards.com/articles/features/systems-reference-document-srd). Digitizations of this data will be sourced from the official digital toolset for D&D 5e, [D&D Beyond](https://www.dndbeyond.com/monsters).
 
 Some data on player characters will also be provided directly from the user for comparison against monster data. This data will have the same shape as the processed monster data, and appropriate defaults will be provided for users who are unfamiliar with building D&D 5e characters.
 
@@ -54,25 +55,25 @@ A complete listing of the monster attributes and their collection status is show
 | Alignment              | Categorical         | Collected                        |
 | Ability Scores         | Quantitative        | Collected                        |
 | Armor Class            | Quantitative        | Collected                        |
-| Hit Points             | Quantitative        | Averages Only                    |
-| Hit Dice               | Dual Categorical    | Unused                           |
-| Damage Vulnerabilities | Categorical Series  | Unused                           |
-| Damage Resistances     | Categorical Series  | Unused                           |
-| Damage Immunities      | Categorical Series  | Unused                           |
-| Effective Hit Points   | Quantitative        | Not Collected, Based on VRI      |
-| Attack Bonus           | Quantitative        | Not Collected                    |
-| Expected Damage        | Quantitative        | Not Collected                    |
-| Save DCs               | Quantitative        | Not Collected                    |
-| Abilities              | Multiple            | Not Collected                    |
-| Actions                | Multiple            | Not Collected                    |
-| Speed                  | Quantitative Series | Needs to be split into multiples |
-| Saving Throws          | Quantitative Series | Needs to be split into multiples |
-| Challenge Rating       | Quantitative        | Not Collected                    |
-| Skills                 | Quantitative Series | Needs to be split into multiples, Needs numerical assignment |
+| Hit Points             | Quantitative        | Collected                        |
+| Hit Dice               | Dual Categorical    | Collected                        |
+| Damage Vulnerabilities | Categorical Series  | Collected                        |
+| Damage Resistances     | Categorical Series  | Collected                        |
+| Damage Immunities      | Categorical Series  | Collected                        |
+| Effective Hit Points   | Quantitative        | Calculated                       |
+| Attack Bonus           | Quantitative        | Calculated                       |
+| Expected Damage        | Quantitative        | Calculated                       |
+| Save DCs               | Quantitative        | Unused For Now                   |
+| Abilities              | Multiple            | Unused For Now                   |
+| Actions                | Multiple            | Unused For Now                   |
+| Speed                  | Quantitative Series | Collected                        |
+| Saving Throws          | Quantitative Series | Collected                        |
+| Challenge Rating       | Quantitative        | Collected                        |
+| Skills                 | Quantitative Series | Unused                           |
 | Condition Immunities   | Categorical Series  | Unused                           |
 | Senses                 | Quantitative Series | Unused                           |
 | Languages              | Categorical Series  | Unused                           |
-| Environment            | Categorical Series  | Not Collected                    |
+| Environment            | Categorical Series  | Collected                        |
 
 # Visualization Design
 ## Option 1 - The Bar Chart-enning
@@ -190,20 +191,23 @@ Get pictures for the monsters and allow the user to have pictures for their play
 
 # Project Schedule
 To be finished by Nov 17:
-* Get a good start on how to implement simulation and store the resulting data
-* Get user input of party
-* Get user input of monsters
-* Display monster/player sidebars
+* Get a good start on how to implement simulation and store the resulting data (Done!)
+* Get user input of party (90% Complete)
+* Get user input of monsters (85% Complete)
+* Display monster/player sidebars (80% Complete)
 
 To be finished by Nov 24:
-* Have fully functioning simulation
-* Display summary statistics
+* Have fully functioning simulation (Done!)
+* Display summary statistics (Done!)
 * This week has a little less stuff because it's Thanksgiving
 
 To be finished by Nov 31:
-* Monster comparison charts with brushing and linking
-* Summary statistic charts
+* Monster comparison charts with brushing and linking (60% Complete)
+* Summary statistic charts (20% Complete)
 
 To be finished by Dec 6:
-* Polish layout of website (shrinking/expanding)
+* Polish layout of website (shrinking/expanding) (15% Complete)
 * Wiggle room if we got behind
+
+## Schedule Update at Prototype 1
+As of now we're on track to finish the project on schedule! There are some categories that we hoped to have done by now that aren't, but there's also a lot of work we didn't anticipate starting yet that's already done. Progress to date has mostly been in gathering and sanitizing the data, getting basic player input, building the simulation component, and setting up the tools we need to visualize our data. From here on out, the work should mostly be focused on making sure we chart the right things and in the right way, improving the design of the site, and working on stretch goals such as specific monster attacks or whatnot.

@@ -1,3 +1,8 @@
+
+/**
+ * The Party class represents the group of player characters to be used for
+ * combat simulations.
+ */
 class Party {
     /**
      * Constructor for Party creation section
@@ -38,6 +43,9 @@ class Party {
         ;
     }
 
+    /**
+     * Add another set of input fields for adding party members
+     */
     displayAnotherMemberForm() {
         if (this.partyMemberList.length <= 8) {
             // remove the 'add party member' button
@@ -128,6 +136,9 @@ class Party {
         }
     }
 
+    /**
+     * Gather the input from the website and store it in our data structures.
+     */
     takeInput() {
         // take the stuff from the input elements, create an object with them
         let character = {};
@@ -155,6 +166,9 @@ class Party {
         this.updatePartyMembersDisplay();
     }
 
+    /**
+     * Update the party member panel when the data changes.
+     */
     updatePartyMembersDisplay() {
         // add current party composition
         let divWithData = this.membersDiv.selectAll('div .member')
@@ -185,73 +199,83 @@ class Party {
         ;
     }
 
+    /**
+     * Return a list of the current party members.
+     */
     getPartyMembers() {
       return this.partyMemberList;
     }
 
+    /**
+     * Add a party member to the list from a data source. Used for default
+     * character sets.
+     */
     addPartyMember(member) {
       // console.log("adding", member)
       this.partyMemberList.push(member);
     }
 
-  addDefaultParty() {
+    /**
+     * Adds a default party to the roster.
+     */
+    addDefaultParty() {
 
-    this.addPartyMember({
-      Name: "Barbara",
-      Class: "Barbarian",
-      STR: 20,
-      DEX: 11,
-      CON: 18,
-      INT: 8,
-      WIS: 14,
-      CHA: 10
-    });
+        this.addPartyMember({
+            Name: "Barbara",
+            Class: "Barbarian",
+            STR: 20,
+            DEX: 11,
+            CON: 18,
+            INT: 8,
+            WIS: 14,
+            CHA: 10
+        });
 
-    this.addPartyMember({
-      Name: "Claire",
-      Class: "Cleric",
-      STR: 14,
-      DEX: 14,
-      CON: 10,
-      INT: 11,
-      WIS: 16,
-      CHA: 8
-    });
+        this.addPartyMember({
+            Name: "Claire",
+            Class: "Cleric",
+            STR: 14,
+            DEX: 14,
+            CON: 10,
+            INT: 11,
+            WIS: 16,
+            CHA: 8
+        });
 
-    this.addPartyMember({
-      Name: "Locke",
-      Class: "Warlock",
-      STR: 8,
-      DEX: 16,
-      CON: 10,
-      INT: 14,
-      WIS: 14,
-      CHA: 18
-    });
+        this.addPartyMember({
+            Name: "Locke",
+            Class: "Warlock",
+            STR: 8,
+            DEX: 16,
+            CON: 10,
+            INT: 14,
+            WIS: 14,
+            CHA: 18
+        });
 
-    this.addPartyMember({
-      Name: "Wiz",
-      Class: "Wizard",
-      STR: 8,
-      DEX: 8,
-      CON: 14,
-      INT: 20,
-      WIS: 16,
-      CHA: 12
-    });
+        this.addPartyMember({
+            Name: "Wiz",
+            Class: "Wizard",
+            STR: 8,
+            DEX: 8,
+            CON: 14,
+            INT: 20,
+            WIS: 16,
+            CHA: 12
+        });
 
-    this.addPartyMember({
-      Name: "Rogue",
-      Class: "Rogue",
-      STR: 12,
-      DEX: 18,
-      CON: 14,
-      INT: 16,
-      WIS: 12,
-      CHA: 18
-    });
+        this.addPartyMember({
+            Name: "Rogue",
+            Class: "Rogue",
+            STR: 12,
+            DEX: 18,
+            CON: 14,
+            INT: 16,
+            WIS: 12,
+            CHA: 18
+        });
 
-    this.updatePartyMembersDisplay();
-  }
+        this.updatePartyMembersDisplay();
+    }
 
 }

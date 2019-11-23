@@ -1,4 +1,9 @@
 
+/**
+ * The Entity Class is the main data representation used by the simulator.
+ * It contains all attributes needed to simulate combat between two groups, and
+ * can be used to represent either a Player Character or a monster.
+ */
 class Entity {
   name;
   currentHP;
@@ -14,6 +19,10 @@ class Entity {
   };
   proficiencyBonus;
 
+  /**
+   * Fills out the entity data based on input gathered from the user or from the
+   * monster.json. Performs any conversions needed to standardize the data.
+   */
   constructor(entityData) {
     this.name = entityData.name || entityData["Name"];
     this.maxHP = entityData.attributes ? entityData.attributes['hit-points'] : 25;
