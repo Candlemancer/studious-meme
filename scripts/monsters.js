@@ -157,7 +157,4 @@ class Monsters {
         // always update the small multiples
     }
 
-    addDefaultMonsters() {
-
-    }
 }

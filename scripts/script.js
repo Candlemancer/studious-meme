@@ -11,16 +11,25 @@ function simulateBattle() {
 
     let playerRoster = party.getPartyMembers().map(p => new Entity(p))
 
-    var monsterRoster = [];
-    for (var i = 0; i < 5; ++i)
+    const NUM_MONSTERS = 10;
+    var randomMonsters = [];
+    for (var i = 0; i < NUM_MONSTERS; ++i)
     {
         let index = Math.floor(Math.random() * 799);
-        monsterRoster.push(monsterList.monsters[index]);
-        console.log("added monster", index, ":", monsterList[index]);
-    }
-    monsterRoster = monsterRoster.map(m => new Entity(m));
+        let m = monsterList.monsters[index];
 
-    console.log("Preparing fight between ", playerRoster, " and ", monsterRoster);
+        // TODO: Figure out why sometimes this happens.
+        if (m == undefined) {
+            --i;
+            continue;
+        }
+
+        randomMonsters.push(m);
+        // console.log("added monster", index, ":", m);
+    }
+    monsterRoster = randomMonsters.map(m => new Entity(m));
+
+    // console.log("Preparing fight between ", playerRoster, " and ", monsterRoster);
 
     var sim = new simulator(simPanel, playerRoster, monsterRoster);
     sim.simulate(500);
