@@ -66,6 +66,14 @@ class Party {
                 .attr('id', 'name')
             ;
             memberDiv.append('label')
+                .attr('for', 'level')
+                .text('Level: ')
+            ;
+            memberDiv.append('input')
+                .attr('type', 'text')
+                .attr('id', 'level')
+            ;
+            memberDiv.append('label')
                 .attr('for', 'class')
                 .text('Class: ')
             ;
