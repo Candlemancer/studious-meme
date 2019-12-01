@@ -28,7 +28,7 @@ class Monsters {
             { json: "alignment", "option-text": "Alignment" },
         ];
         this.tableAttributes = [
-            { json: 'monster-name', 'option-text': 'Monster Name' },
+            { json: 'name', 'option-text': 'Monster Name' },
             ...this.partitionOptions,
             ...this.axisOptions
         ];
@@ -49,8 +49,6 @@ class Monsters {
         this.screenWidth = svgBounds.width
 
         this.createMonsterGraphs();
-
-        this.createMonsterSelect();
     }
 
     /**
@@ -136,15 +134,6 @@ class Monsters {
     }
 
     /**
-     * Visualizes the currently selected monsters in a table.
-     * TODO.
-     */
-    createMonsterSelect() {
-        // I think we'll display the selected monsters in a table
-        // name | stat | stat | stat | etc...
-    }
-
-    /**
      * Redraw the charts when the data changes.
      */
     updateCharts() {
@@ -223,16 +212,10 @@ class Monsters {
             .enter()
             .append('circle')
             .attr('class', 'bigGraphCircle')
-            .attr('r', '4')
+            .attr('r', '5')
             .attr('cx', m => xScale(m.attributes[xAxisValue]))
             .attr('cy', m => (this.screenWidth / 2) - (yScale(m.attributes[yAxisValue])+xAxisHeight))
             .on('click', d => this.selectMonster())
-            .style('fill', m => {
-                if (this.selectedMonsters.includes(m)){
-                    return 'red';
-                }
-                return 'black';
-            })
         ;
     }
 
@@ -307,13 +290,7 @@ class Monsters {
                 .attr('r', '3')
                 .attr('cx', m => xScale(m.attributes[xAxisValue]))
                 .attr('cy', m => svgWidth - yScale(m.attributes[yAxisValue])-wiggleRoom.bottom)
-                .on('click', d => selectMonster())
-                .style('fill', m => {
-                    if (this.selectedMonsters.includes(m)) {
-                        return 'red';
-                    }
-                    return 'black';
-                })
+                .on('click', d => this.selectMonster())
             ;
         }
     }
@@ -322,9 +299,8 @@ class Monsters {
      * Handler for selecting monsters on the charts.
      */
     selectMonster() {
-        let selectedCircle = d3.event.target;
-        selectedCircle.style.fill = 'red';
-        // gotta figure out how to link it in the other view without having to rebuild the whole other view...
+        // let selectedCircle = d3.event.target;
+        // gotta figure out how to highlight the monsters that are selected
         let selectedMonster = d3.event.target.__data__;
         this.selectedMonsters.push(selectedMonster);
         this.displaySelectedMonsters()
@@ -355,6 +331,11 @@ class Monsters {
             th.appendChild(text);
             row.appendChild(th);
         }
+        // and an emty row for the remove button
+        let th = document.createElement('th');
+        let text = document.createTextNode('');
+        th.appendChild(text);
+        row.appendChild(th);
     }
 
     /**
@@ -379,10 +360,23 @@ class Monsters {
                     }
                 }
             }
+            // and add a delete button at the end
+            let cell = row.insertCell();
+            let delBtn = document.createElement('input');
+            delBtn.type = 'button';
+            delBtn.className = 'delete';
+            delBtn.value = 'Delete';
+            delBtn.onclick = (d => {
+                if (this.selectedMonsters.length === 1) {
+                    this.selectedMonsters = [];
+                } else {
+                    // this doesn't work
+                    let toDeleteName = d.target.parentElement.parentElement.cells[0].childNodes[0].nodeValue;
+                    this.selectedMonsters = this.selectedMonsters.filter(m => m.name !== toDeleteName);
+                }
+                this.displaySelectedMonsters();
+            });
+            cell.appendChild(delBtn);
         }
     }
-
-    // didn't consider what to do about all the overlapping data...
-    // especially considering how you click the table for a selection...
-    // maybe work that out on tuesday, if Jonathan is still around
 }
