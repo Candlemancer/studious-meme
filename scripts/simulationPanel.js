@@ -214,6 +214,7 @@ class SimulationPanel {
             .data(entityData)
             .join("p")
             .text(d => d.name);
+            // .style("color", (_, i) => this.getColorForEntity(entityData, i));
 
         // Fill out the Charts
         this.drawBarAttribute(selection.select(".hpRow" + columnClass), entityData, [0, 400], "maxHP");
@@ -228,16 +229,6 @@ class SimulationPanel {
         this.drawBarAttribute(selection.select(".intRow" + columnClass), entityData, ATTR_DOMAIN, "int", true);
         this.drawBarAttribute(selection.select(".wisRow" + columnClass), entityData, ATTR_DOMAIN, "wis", true);
         this.drawBarAttribute(selection.select(".chaRow" + columnClass), entityData, ATTR_DOMAIN, "cha", true);
-
-        // selection.select(".hpChart")
-        //     .select("g")
-        //     .selectAll("rect")
-        //     .data(entityData)
-        //     .join("rect")
-        //     .attr("x", d => xScale(d.name))
-        //     .attr("y", 0)
-        //     .attr("width", xScale.bandwidth())
-        //     .attr("height", d => d.maxHP);
     }
 
     /**
@@ -296,17 +287,9 @@ class SimulationPanel {
             .join("rect")
             .attr("x", d => xScale(d.name))
             .attr("y", d => barBottom(d))
-            // .attr("y", d => {
-            //     console.log("---------------------")
-            //     console.log("value:" + attrGetter(d));
-            //     console.log("bottom:" + barBottom(d));
-            //     console.log("zero:" + yScale(0));
-            //     console.log("height:" + barHeight(d));
-
-            //     return barBottom(d);
-            // })
             .attr("width", xScale.bandwidth())
-            .attr("height", d => barHeight(d));
+            .attr("height", d => barHeight(d) + 1)
+            .style("fill", (_, i) => this.getColorForEntity(data, i));
 
         selection.select("svg")
             .append("g")
@@ -319,6 +302,12 @@ class SimulationPanel {
             .attr('dx', '-.8em')
             .attr('dy', '.15em')
             .attr('transform', 'rotate(-65)');
+    }
+
+    getColorForEntity(entityData, index) {
+        return (entityData[index].type == "player") ?
+            d3.schemeTableau10[index] :
+            d3.interpolateViridis(index / entityData.length);
     }
 
 }

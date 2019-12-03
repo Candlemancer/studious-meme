@@ -264,6 +264,7 @@ class Monsters {
             .attr('dy', '.5em')
             .attr('transform', 'scale(1,-1)')
         ;
+
         // add the dots
         bigGraphSVG.selectAll('circle')
             .data(this.monsters)
@@ -273,7 +274,9 @@ class Monsters {
             .attr('r', '4')
             .attr('cx', m => xScale(m.attributes[xAxisValue]))
             .attr('cy', m => (this.screenWidth / 2) - (yScale(m.attributes[yAxisValue])+xAxisHeight))
+            .style('fill', d => this.getColorForMonster(d))
         ;
+
         // add the brush
         let brush = d3.brush().extent([[yAxisWidth, this.margin.top],[(this.screenWidth/2)-this.margin.left-this.margin.right, (this.screenWidth/2)-xAxisHeight]]).on("end", d => {
             let range = d3.event.selection;
@@ -291,6 +294,15 @@ class Monsters {
             this.displaySelectedMonsters();
         });
         bigGraphSVG.append("g").attr("class", "brush").call(brush);
+
+        // Redraw any selected monsters
+        let selected = bigGraphSVG.selectAll('circle')
+            .filter(d => this.userSelectedMonsters.includes(d))
+        ;
+
+        selected.classed('selected-monster', true)
+            .each((_, i, nodes) => nodes[i].parentNode.appendChild(nodes[i]))
+        ;
     }
 
     /**
@@ -364,6 +376,7 @@ class Monsters {
                 .attr('r', '2')
                 .attr('cx', m => xScale(m.attributes[xAxisValue]))
                 .attr('cy', m => svgWidth - yScale(m.attributes[yAxisValue])-wiggleRoom.bottom)
+                .style('fill', m => this.getColorForMonster(m))
             ;
             // add the brush, but maybe later
             // let brush = d3.brush().extent([[wiggleRoom.side, 0],[svgWidth, (svgWidth-wiggleRoom.bottom)]]).on("end", d => {
@@ -372,6 +385,16 @@ class Monsters {
             // });
             // svg.append("g").attr("class", "brush").call(brush);
         }
+
+        // Redraw any selected monsters
+        let selected = d3.select('#smallMultiplesDivForSVGs')
+            .selectAll('circle')
+            .filter(d => this.userSelectedMonsters.includes(d))
+        ;
+
+        selected.classed('selected-monster', true)
+            .each((_, i, nodes) => nodes[i].parentNode.appendChild(nodes[i]))
+        ;
     }
 
     /**
@@ -402,9 +425,15 @@ class Monsters {
     selectMonster() {
         // let selectedCircle = d3.event.target;
         // gotta figure out how to highlight the monsters that are selected
-        let selectedMonster = d3.event.target.__data__;
-        this.userSelectedMonsters.push(selectedMonster);
-        this.displayChosenMonsters()
+        let selectedMonster = d3.event.target;
+        selectedMonster.classed("selected-monster", true);
+
+        console.log(selectedMonster);
+
+        this.userSelectedMonsters.push(selectedMonster.data());
+        this.displayChosenMonsters();
+        this.updateBigChart();
+        this.updateSmallMultiples();
     }
 
     /**
@@ -537,11 +566,29 @@ class Monsters {
             let toSelectName = s.target.parentElement.parentElement.cells[0].childNodes[0].nodeValue;
             this.userSelectedMonsters = [...this.userSelectedMonsters, this.monstersToDisplay.find(m => m.name === toSelectName)];
             this.displayChosenMonsters();
+            this.updateBigChart();
+            this.updateSmallMultiples();
         });
         cell.appendChild(selectBtn);
     }
 
     getSelectedMonsters() {
         return this.userSelectedMonsters;
+    }
+
+    getColorForMonster(monster) {
+
+        // return "black";
+
+        // Prep the colors
+        const MAX_CR = 30;
+
+        // KLUDGE: Don't @ me for the eval
+        let cr = eval(monster['challenge-rating']);
+
+        // Need to squish the colors in half to make them show up on a white background.
+        let ratio = (cr / MAX_CR) * 0.6;
+
+        return d3.interpolateViridis(ratio);
     }
 }

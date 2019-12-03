@@ -39,12 +39,14 @@ class Simulator {
         for (const p of this.party) {
             this.summary.players[p.name] = {};
             this.summary.players[p.name].name = p.name;
+            this.summary.players[p.name].type = p.type;
             this.summary.players[p.name].damage = 0;
         }
 
         for (const m of this.monsters) {
             this.summary.monsters[m.name] = {};
             this.summary.monsters[m.name].name = m.name;
+            this.summary.monsters[m.name].type = m.type;
             this.summary.monsters[m.name].damage = 0;
         }
 

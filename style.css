@@ -5,8 +5,13 @@
 */
 
 /* Base Rules */
+body {
+    text-align: center;
+}
+
 table {
     border-spacing: 15px;
+    margin: 0 auto;
 }
 
 input, select {
@@ -137,6 +142,11 @@ input, select {
 .collapsible:hover {
     background-color: #3F3F3F;
     color: #EEEEEE;
+}
+
+.selected-monster {
+    /* fill: red !important; */
+    fill: #FF3D7F !important;
 }
 
 /* Theme Rules */

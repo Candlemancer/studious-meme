@@ -14,7 +14,10 @@ class Entity {
    * monster.json. Performs any conversions needed to standardize the data.
    */
   constructor(entityData) {
+
     this.name = entityData.name || entityData["Name"];
+    this.type = entityData.Class ? "player" : "monster";
+
     this.maxHP = entityData.attributes ? entityData.attributes['hit-points'] : 25;
     this.currentHP = this.maxHP;
 
