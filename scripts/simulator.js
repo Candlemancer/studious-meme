@@ -20,14 +20,34 @@ class Simulator {
      * Resets all of the summary statistics.
      */
     resetSummaryInfo() {
+
+        this.summary.numFights = 0;
+
         this.summary.wins = {
         players: 0,
         monsters: 0,
         }
 
-        this.summary.damage = {
+        this.summary.damageSummary = {
         players: 0,
         monsters: 0,
+        }
+
+        this.summary.players = {};
+        this.summary.monsters = {};
+
+        for (const p of this.party) {
+            this.summary.players[p.name] = {};
+            this.summary.players[p.name].name = p.name;
+            this.summary.players[p.name].type = p.type;
+            this.summary.players[p.name].damage = 0;
+        }
+
+        for (const m of this.monsters) {
+            this.summary.monsters[m.name] = {};
+            this.summary.monsters[m.name].name = m.name;
+            this.summary.monsters[m.name].type = m.type;
+            this.summary.monsters[m.name].damage = 0;
         }
 
         this.summary.turns = 0;
@@ -35,6 +55,8 @@ class Simulator {
         this.summary.avgTurns = 0.0;
 
         this.summary.runtime = "0 ms";
+
+        // console.log(this.summary);
     }
 
     /**
@@ -95,6 +117,7 @@ class Simulator {
         combat.turnOrder.sort((a, b) => b[0] - a[0])
         // console.log("Initiative Order: ", combat);
 
+
         while (combat.goodTeam.length > 0 && combat.badTeam.length > 0) {
             for (var turn of combat.turnOrder) {
                 let combatant = turn[1];
@@ -120,8 +143,12 @@ class Simulator {
 
                 // console.log(name, "did", damage, "damage!");
                 isPlayer ?
-                this.summary.damage.players += damage :
-                this.summary.damage.monsters += damage;
+                    this.summary.players[combatant.name].damage += damage :
+                    this.summary.monsters[combatant.name].damage += damage;
+
+                isPlayer ?
+                    this.summary.damageSummary.players += damage :
+                    this.summary.damageSummary.monsters += damage;
 
                 if (opponent.currentHP <= 0) {
                     // console.log(opponent.name, "was felled!");
@@ -136,5 +163,6 @@ class Simulator {
         combat.goodTeam.length > 0 ?
         this.summary.wins.players += 1 :
         this.summary.wins.monsters += 1;
+        this.summary.numFights += 1;
     }
 }

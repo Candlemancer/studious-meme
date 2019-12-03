@@ -47,11 +47,18 @@ class Monsters {
             .style('width', '100%')
         ;
 
+        this.monstersChosenDiv.append('h2')
+            .text('Selected Monsters')
+        ;
+
         this.monstersSelectDiv = d3.select('#monsters')
             .append('div')
             .attr('id', 'monstersSelectDiv')
             .style('width', '100%')
         ;
+
+        this.monstersSelectDiv.append('h2')
+            .text('Monsters in the Selected Region')
 
         let svgBounds = d3.select('.collapsible').node().getBoundingClientRect();
         this.screenWidth = svgBounds.width
@@ -68,28 +75,42 @@ class Monsters {
             .attr('class', 'left-col')
             .attr('id', 'bigMonsterGraph')
         ;
+
+        let bigGraphControls = bigGraphColumn.append('div')
+            .attr('class', 'controls')
+        ;
+
         let smallMultiplesColumn = this.monsterGraphsDiv
             .append('div')
             .attr('class', 'right-col')
             .attr('id', 'smallMonsterGraphsDiv')
         ;
 
-        // append svg to bigGraphColumn
-        bigGraphColumn.append('svg')
-            .attr('width', this.screenWidth / 2)
-            .attr('height', this.screenWidth / 2)
-            .attr('id', 'bigGraphSVG')
+        let smallMultiplesControls = smallMultiplesColumn.append('div')
+            .attr('class', 'controls')
         ;
+
+        bigGraphControls.append('h2')
+            .text("All Monsters")
+        ;
+
         // append selects with appropriate options for x-axis and y-axis
-        bigGraphColumn.append('label')
+        let xAxisControls = bigGraphControls.append('div')
+            .attr('class', 'scatterControls')
+            .attr('id', 'domainControls')
+        ;
+
+        xAxisControls.append('label')
             .attr('for', 'xaxis')
             .text('X-Axis: ')
         ;
-        let xSelect = bigGraphColumn.append('select')
+
+        let xSelect = xAxisControls.append('select')
             .attr('name', 'xaxis')
             .attr('id', 'xAxisSelect')
             .on('change', v => this.updateCharts())
         ;
+
         xSelect.selectAll('option')
             .data(this.axisOptions)
             .enter()
@@ -97,15 +118,23 @@ class Monsters {
             .attr('value', o => o.json)
             .text(o => o["option-text"])
         ;
-        bigGraphColumn.append('label')
+
+        let yAxisControls = bigGraphControls.append('div')
+            .attr('class', 'scatterControls')
+            .attr('id', 'rangeControls')
+        ;
+
+        yAxisControls.append('label')
             .attr('for', 'yaxis')
             .text('Y-Axis: ')
         ;
-        let ySelect = bigGraphColumn.append('select')
+
+        let ySelect = yAxisControls.append('select')
             .attr('name', 'yaxis')
             .attr('id', 'yAxisSelect')
             .on('change', v => this.updateCharts())
         ;
+
         ySelect.selectAll('option')
             .data(this.axisOptions)
             .enter()
@@ -114,28 +143,49 @@ class Monsters {
             .text(o => o["option-text"])
         ;
 
-        // append a div in which to put many svgs to smallMultiplesColumn
-        smallMultiplesColumn.append('div')
-            .attr('id', 'smallMultiplesDivForSVGs')
+        // append svg to bigGraphColumn
+        bigGraphColumn.append('svg')
+            .attr('width', this.screenWidth / 2)
+            .attr('height', this.screenWidth / 2)
+            .attr('id', 'bigGraphSVG')
         ;
+
+
+
+        smallMultiplesControls.append('h2')
+            .text('Monster Subgroups')
+        ;
+
+        let partitionControls = smallMultiplesControls.append('div')
+            .attr('class', 'scatterControls')
+        ;
+
         // append selects with appropriate options for partitions
-        smallMultiplesColumn.append('label')
+        partitionControls.append('label')
             .attr('for', 'partition')
             .text('Partition on: ')
-        ;
-        let pSelect = smallMultiplesColumn.append('select')
+            ;
+
+        let pSelect = partitionControls.append('select')
             .attr('name', 'partition')
             .attr('id', 'pAxisSelect')
             .on('change', v => this.updateCharts())
-        ;
+            ;
+
         pSelect.selectAll('option')
             .data(this.partitionOptions)
             .enter()
             .append('option')
             .attr('value', o => o.json)
             .text(o => o["option-text"])
-        ;
+            ;
+
         document.getElementById('pAxisSelect').value = 'monster-size';
+
+        // append a div in which to put many svgs to smallMultiplesColumn
+        smallMultiplesColumn.append('div')
+            .attr('id', 'smallMultiplesDivForSVGs')
+        ;
 
         // trigger updateCharts
         this.updateCharts();
@@ -214,6 +264,7 @@ class Monsters {
             .attr('dy', '.5em')
             .attr('transform', 'scale(1,-1)')
         ;
+
         // add the dots
         bigGraphSVG.selectAll('circle')
             .data(this.monsters)
@@ -223,7 +274,9 @@ class Monsters {
             .attr('r', '4')
             .attr('cx', m => xScale(m.attributes[xAxisValue]))
             .attr('cy', m => (this.screenWidth / 2) - (yScale(m.attributes[yAxisValue])+xAxisHeight))
+            .style('fill', d => this.getColorForMonster(d))
         ;
+
         // add the brush
         let brush = d3.brush().extent([[yAxisWidth, this.margin.top],[(this.screenWidth/2)-this.margin.left-this.margin.right, (this.screenWidth/2)-xAxisHeight]]).on("end", d => {
             let range = d3.event.selection;
@@ -241,6 +294,15 @@ class Monsters {
             this.displaySelectedMonsters();
         });
         bigGraphSVG.append("g").attr("class", "brush").call(brush);
+
+        // Redraw any selected monsters
+        let selected = bigGraphSVG.selectAll('circle')
+            .filter(d => this.userSelectedMonsters.includes(d))
+        ;
+
+        selected.classed('selected-monster', true)
+            .each((_, i, nodes) => nodes[i].parentNode.appendChild(nodes[i]))
+        ;
     }
 
     /**
@@ -314,6 +376,7 @@ class Monsters {
                 .attr('r', '2')
                 .attr('cx', m => xScale(m.attributes[xAxisValue]))
                 .attr('cy', m => svgWidth - yScale(m.attributes[yAxisValue])-wiggleRoom.bottom)
+                .style('fill', m => this.getColorForMonster(m))
             ;
             // add the brush, but maybe later
             // let brush = d3.brush().extent([[wiggleRoom.side, 0],[svgWidth, (svgWidth-wiggleRoom.bottom)]]).on("end", d => {
@@ -322,14 +385,32 @@ class Monsters {
             // });
             // svg.append("g").attr("class", "brush").call(brush);
         }
+
+        // Redraw any selected monsters
+        let selected = d3.select('#smallMultiplesDivForSVGs')
+            .selectAll('circle')
+            .filter(d => this.userSelectedMonsters.includes(d))
+        ;
+
+        selected.classed('selected-monster', true)
+            .each((_, i, nodes) => nodes[i].parentNode.appendChild(nodes[i]))
+        ;
     }
 
     /**
      * Display a table of monsters selected from the chart
      */
     displaySelectedMonsters() {
+
         console.log('make a table for', this.monstersToDisplay);
-        document.getElementById('monstersSelectDiv').innerHTML = '';
+
+        // Remove any old selections
+        d3.select('#monstersSelectDiv')
+            .selectAll('table')
+            .remove()
+        ;
+
+        // Add new selections
         if (this.monstersToDisplay) {
             let table = document.createElement('table');
             document.getElementById('monstersSelectDiv').appendChild(table);
@@ -344,16 +425,29 @@ class Monsters {
     selectMonster() {
         // let selectedCircle = d3.event.target;
         // gotta figure out how to highlight the monsters that are selected
-        let selectedMonster = d3.event.target.__data__;
-        this.userSelectedMonsters.push(selectedMonster);
-        this.displayChosenMonsters()
+        let selectedMonster = d3.event.target;
+        selectedMonster.classed("selected-monster", true);
+
+        console.log(selectedMonster);
+
+        this.userSelectedMonsters.push(selectedMonster.data());
+        this.displayChosenMonsters();
+        this.updateBigChart();
+        this.updateSmallMultiples();
     }
 
     /**
      * Build up the table for showing selected monsters.
      */
     displayChosenMonsters() {
-        document.getElementById('monstersChosenDiv').innerHTML = '';
+
+        // Remove Old Choices
+        d3.select('#monstersChosenDiv')
+            .selectAll('table')
+            .remove()
+        ;
+
+        // Add new Choices
         if (this.userSelectedMonsters) {
             let table = document.createElement('table');
             document.getElementById('monstersChosenDiv').appendChild(table);
@@ -472,7 +566,29 @@ class Monsters {
             let toSelectName = s.target.parentElement.parentElement.cells[0].childNodes[0].nodeValue;
             this.userSelectedMonsters = [...this.userSelectedMonsters, this.monstersToDisplay.find(m => m.name === toSelectName)];
             this.displayChosenMonsters();
+            this.updateBigChart();
+            this.updateSmallMultiples();
         });
         cell.appendChild(selectBtn);
+    }
+
+    getSelectedMonsters() {
+        return this.userSelectedMonsters;
+    }
+
+    getColorForMonster(monster) {
+
+        // return "black";
+
+        // Prep the colors
+        const MAX_CR = 30;
+
+        // KLUDGE: Don't @ me for the eval
+        let cr = eval(monster['challenge-rating']);
+
+        // Need to squish the colors in half to make them show up on a white background.
+        let ratio = (cr / MAX_CR) * 0.6;
+
+        return d3.interpolateViridis(ratio);
     }
 }

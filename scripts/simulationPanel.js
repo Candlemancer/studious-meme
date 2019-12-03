@@ -8,74 +8,134 @@ class SimulationPanel {
      * Constructor for the SimulationPanel class
      */
     constructor() {
-        this.leftPanel = d3.select("#simLeft");
-        this.midPanel = d3.select("#simMid");
-        this.rightPanel = d3.select("#simRight");
+        this.contentRows = d3.select("#simulation");
+        this.controls = this.contentRows.append("div")
+            .attr("class", "controls");
+
+        this.controls.append("button")
+            .text("Fight!")
+            .on("click", simulateBattle);
+
+        this.resultDisplay = this.contentRows.append("div")
+            .attr("class", "simSummary");
+
+        let rosters = this.addInfoRow(this.contentRows, "rosterRow", "Rosters");
+        rosters.select(".simLeft")
+            .classed("roster", true)
+            .append("h2")
+            .text("Player Characters");
+
+        rosters.select(".simRight")
+            .classed("roster", true)
+            .append("h2")
+            .text("Selected Monsters");
 
         this.chartWidth = 400;
         this.chartHeight = 300;
 
-        this.leftPanel.append("div")
-            .attr("class", "roster");
+        this.axisWidth = 30;
+        this.axisHeight = 150;
 
-        this.rightPanel.append("div")
-            .attr("class", "roster");
+        this.svgPadding = 10;
 
-        this.addStatChart(this.leftPanel, "hpChart", "Maximum HP");
-        this.addStatChart(this.rightPanel, "hpChart", "Maximum HP");
+        this.addStatRow(this.contentRows, "hpRow", "Hit Points");
+        this.addStatRow(this.contentRows, "acRow", "Armor Class");
+        this.addStatRow(this.contentRows, "damageRow", "Damage Dealt");
+        this.addStatRow(this.contentRows, "strRow", "STR Modifier");
+        this.addStatRow(this.contentRows, "dexRow", "DEX Modifier");
+        this.addStatRow(this.contentRows, "conRow", "CON Modifier");
+        this.addStatRow(this.contentRows, "intRow", "INT Modifier");
+        this.addStatRow(this.contentRows, "wisRow", "WIS Modifier");
+        this.addStatRow(this.contentRows, "chaRow", "CHA Modifier");
 
-        this.addStatChart(this.leftPanel, "acChart", "Armor Class");
-        this.addStatChart(this.rightPanel, "acChart", "Armor Class");
 
-        this.addStatChart(this.leftPanel, "strChart", "STR Modifier");
-        this.addStatChart(this.rightPanel, "strChart", "STR Modifier");
+        // this.addStatChart(this.leftPanel, "strChart", "STR Modifier");
+        // this.addStatChart(this.rightPanel, "strChart", "STR Modifier");
 
-        this.addStatChart(this.leftPanel, "dexChart", "DEX Modifier");
-        this.addStatChart(this.rightPanel, "dexChart", "DEX Modifier");
+        // this.addStatChart(this.leftPanel, "dexChart", "DEX Modifier");
+        // this.addStatChart(this.rightPanel, "dexChart", "DEX Modifier");
 
-        this.addStatChart(this.leftPanel, "conChart", "CON Modifier");
-        this.addStatChart(this.rightPanel, "conChart", "CON Modifier");
+        // this.addStatChart(this.leftPanel, "conChart", "CON Modifier");
+        // this.addStatChart(this.rightPanel, "conChart", "CON Modifier");
 
-        this.addStatChart(this.leftPanel, "intChart", "INT Modifier");
-        this.addStatChart(this.rightPanel, "intChart", "INT Modifier");
+        // this.addStatChart(this.leftPanel, "intChart", "INT Modifier");
+        // this.addStatChart(this.rightPanel, "intChart", "INT Modifier");
 
-        this.addStatChart(this.leftPanel, "wisChart", "WIS Modifier");
-        this.addStatChart(this.rightPanel, "wisChart", "WIS Modifier");
+        // this.addStatChart(this.leftPanel, "wisChart", "WIS Modifier");
+        // this.addStatChart(this.rightPanel, "wisChart", "WIS Modifier");
 
-        this.addStatChart(this.leftPanel, "chaChart", "CHA Modifier");
-        this.addStatChart(this.rightPanel, "chaChart", "CHA Modifier");
+        // this.addStatChart(this.leftPanel, "chaChart", "CHA Modifier");
+        // this.addStatChart(this.rightPanel, "chaChart", "CHA Modifier");
+
+        visitCollapsible(updateCollapsibles);
+    }
+
+    addInfoRow(selection, className, title) {
+        let header = selection.append("button")
+            .attr("class", "collapsible")
+            .style("width", "80%")
+            .text(title);
+
+        assignHandler(header.node(), "flex");
+
+        let row = selection.append("div")
+            .classed(className, true)
+            .classed("simRow", true);
+
+        row.append("div")
+            .classed("simLeft", true)
+            .classed("simCol", true);
+
+        row.append("div")
+            .classed("simRight", true)
+            .classed("simCol", true);
+
+        return row
     }
 
     /**
      * Adds an svg element to the panel that can be later filled with info.
      */
-    addStatChart(selection, className, title)
+    addStatRow(selection, className, title)
     {
-        selection.append("svg")
-            .attr("width", this.chartWidth)
-            .attr("height", this.chartHeight)
-            .attr("class", className)
-            .append("g")
-            .attr("transform", "translate(0, 300) scale(1, -1)")
+        let row = this.addInfoRow(selection, className, title)
 
-        selection.append("p")
-            .text(title);
+        let addSvg = (selection) => {
+            selection.append("svg")
+                .attr("width", this.chartWidth + this.axisWidth + 2 * this.svgPadding)
+                .attr("height", this.chartHeight + this.axisHeight + 2 * this.svgPadding)
+                .attr("class", className)
+                .append("g")
+                .attr("transform",
+                    `translate(${this.svgPadding}, ${this.chartHeight + this.axisHeight + this.svgPadding}) scale(1, -1)`)
+        }
+
+        let left = row.select(".simLeft")
+            .classed(className, true);
+
+        addSvg(left);
+
+
+        let right = row.select(".simRight")
+            .classed(className, true);
+
+        addSvg(right);
     }
 
     /**
      * Updates the data on the left representing the players.
      */
     updatePlayerData(playerData) {
-        // console.log("Updating player info...");
-        this.updateTeamData(this.leftPanel, playerData);
+        console.log("Updating player info...");
+        this.updateTeamData(this.contentRows, ".simLeft", playerData);
     }
 
     /**
      * Updates the data on the right representing the monsters.
      */
     updateMonsterData(monsterData) {
-        // console.log("Updating monster info...");
-        this.updateTeamData(this.rightPanel, monsterData);
+        console.log("Updating monster info...");
+        this.updateTeamData(this.contentRows, ".simRight", monsterData);
     }
 
     /**
@@ -84,107 +144,170 @@ class SimulationPanel {
     updateSimulationData(simData) {
         // console.log("Updating simulation info...");
 
-        this.midPanel.selectAll('p')
+        this.resultDisplay.selectAll('p')
             .remove();
 
-        this.midPanel
-          .append("p")
-          .text("Player Wins: " + simData.wins.players);
+        this.resultDisplay
+            .append("p")
+            .text("Total Combats: " + simData.numFights.toLocaleString());
 
-        this.midPanel
-          .append("p")
-          .text("Monster Wins: " + simData.wins.monsters);
+        this.resultDisplay
+            .append("p")
+            .text("Player Wins: " + simData.wins.players.toLocaleString() +
+                " (" +
+                Math.floor((simData.wins.players / simData.numFights) * 100) +
+                "%)");
 
-        this.midPanel
-          .append("p")
-          .text("Damage Dealt by Players: " + simData.damage.players);
+        this.resultDisplay
+            .append("p")
+            .text("Monster Wins: " + simData.wins.monsters.toLocaleString() +
+                " (" +
+                Math.floor((simData.wins.monsters / simData.numFights) * 100) +
+                "%)");
 
-        this.midPanel
-          .append("p")
-          .text("Damage Dealt by Monsters: " + simData.damage.monsters);
+        this.resultDisplay
+            .append("p")
+            .text("Total Damage Dealt by All Players: " +
+                simData.damageSummary.players.toLocaleString());
 
-        this.midPanel
-          .append("p")
-          .text("Total Turns: " + simData.turns);
+        this.resultDisplay
+            .append("p")
+            .text("Total Damage Dealt by All Monsters: " +
+                simData.damageSummary.monsters.toLocaleString());
 
-        this.midPanel
-          .append("p")
-          .text("Average Turns Per Battle: " + simData.avgTurns);
+        this.resultDisplay
+            .append("p")
+            .text("Total Turns: " + simData.turns.toLocaleString());
 
-        this.midPanel
-          .append("p")
-          .text("Simulation Runtime: " + simData.runtime);
+        this.resultDisplay
+            .append("p")
+            .text("Average Turns Per Battle: " +
+                simData.avgTurns.toLocaleString());
 
+        this.resultDisplay
+            .append("p")
+            .text("Simulation Runtime: " + simData.runtime);
 
-        // .text("Wins: " + simData.wins.players);
+        this.drawBarAttribute(
+            this.contentRows.select(".damageRow.simLeft"),
+            Object.values(simData.players),
+            [0, 15000],
+            "damage");
+
+        this.drawBarAttribute(
+            this.contentRows.select(".damageRow.simRight"),
+            Object.values(simData.monsters),
+            [0, 15000],
+            "damage");
+
     }
 
     /**
      * Generic function that updates data for players or monsters based on the
      * data passed in as arguments.
      */
-    updateTeamData(selection, entityData) {
-
-        // console.log(entityData);
+    updateTeamData(selection, columnClass, entityData) {
 
         // Fill out the Team Roster
-        selection.select(".roster")
+        selection.select(".roster" + columnClass)
             .selectAll('p')
             .data(entityData)
             .join("p")
             .text(d => d.name);
+            // .style("color", (_, i) => this.getColorForEntity(entityData, i));
 
         // Fill out the Charts
-        this.drawBarAttribute(selection, entityData, 300, "hpChart", "maxHP");
-        this.drawBarAttribute(selection, entityData, 30, "acChart", "armorClass");
+        this.drawBarAttribute(selection.select(".hpRow" + columnClass), entityData, [0, 400], "maxHP");
+        this.drawBarAttribute(selection.select(".acRow" + columnClass), entityData, [0, 30], "armorClass");
 
         // TODO: Many of these are negative
-        this.drawBarAttribute(selection, entityData, 10, "strChart", "str", true);
-        this.drawBarAttribute(selection, entityData, 10, "dexChart", "dex", true);
-        this.drawBarAttribute(selection, entityData, 10, "conChart", "con", true);
-        this.drawBarAttribute(selection, entityData, 10, "intChart", "int", true);
-        this.drawBarAttribute(selection, entityData, 10, "wisChart", "wis", true);
-        this.drawBarAttribute(selection, entityData, 10, "chaChart", "cha", true);
-
-
-        // selection.select(".hpChart")
-        //     .select("g")
-        //     .selectAll("rect")
-        //     .data(entityData)
-        //     .join("rect")
-        //     .attr("x", d => xScale(d.name))
-        //     .attr("y", 0)
-        //     .attr("width", xScale.bandwidth())
-        //     .attr("height", d => d.maxHP);
+        const MAX_ATTR_MOD = 10;
+        const ATTR_DOMAIN = [-MAX_ATTR_MOD, MAX_ATTR_MOD];
+        this.drawBarAttribute(selection.select(".strRow" + columnClass), entityData, ATTR_DOMAIN, "str", true);
+        this.drawBarAttribute(selection.select(".dexRow" + columnClass), entityData, ATTR_DOMAIN, "dex", true);
+        this.drawBarAttribute(selection.select(".conRow" + columnClass), entityData, ATTR_DOMAIN, "con", true);
+        this.drawBarAttribute(selection.select(".intRow" + columnClass), entityData, ATTR_DOMAIN, "int", true);
+        this.drawBarAttribute(selection.select(".wisRow" + columnClass), entityData, ATTR_DOMAIN, "wis", true);
+        this.drawBarAttribute(selection.select(".chaRow" + columnClass), entityData, ATTR_DOMAIN, "cha", true);
     }
 
     /**
      * Draws a (very) basic bar chart based on the data provided.
      */
-    drawBarAttribute(selection, data, maxValue, className, attributeName, isAttr = false) {
+    drawBarAttribute(selection, data, domain, attributeName, isAttr = false) {
         let names = data.map(e => e.name);
 
+        // Setup Scales
         let xScale = d3.scaleBand()
             .domain(names)
-            .range([0, this.chartWidth])
+            .range([this.axisWidth, this.chartWidth + this.axisWidth])
             .paddingInner(0.05);
 
-        let yScale = d3.scaleLinear()
-            .domain([0, maxValue])
-            .range([0, this.chartHeight]);
+        let xAxisScale = d3.scaleBand()
+            .domain(names)
+            .range([0, this.chartWidth]);
 
-        selection.select("." + className)
-            .select("g")
+        let yScale = d3.scaleLinear()
+            .domain(domain)
+            .range([this.axisHeight, this.chartHeight + this.axisHeight]);
+
+        let yAxisScale = d3.scaleLinear()
+            .domain(domain)
+            .range([this.chartHeight, 0]);
+
+        // Setup Axes
+        let xAxis = d3.axisBottom(xAxisScale)
+            .tickFormat((d, i) => d);
+
+        let yAxis = d3.axisLeft(yAxisScale)
+            .tickFormat((d, i) => d);
+
+        // Handle negatives
+        let attrGetter = (d) => {
+            return isAttr ?
+                (d.attributes[attributeName]) :
+                (d[attributeName]);
+        }
+
+        let barBottom = d => Math.min(yScale(attrGetter(d)), yScale(0));
+        let barHeight = d => yScale(Math.abs(attrGetter(d))) - yScale(0);
+
+        // Draw the dang thing
+        selection.selectAll(".simAxis").remove();
+
+        selection.select("svg")
+            .append("g")
+            .attr("class", "simAxis")
+            .attr("transform", `translate(${this.axisWidth - 1 + this.svgPadding}, ${this.svgPadding})`)
+            .call(yAxis);
+
+        selection.select("g")
             .selectAll("rect")
             .data(data)
             .join("rect")
             .attr("x", d => xScale(d.name))
-            .attr("y", 0)
+            .attr("y", d => barBottom(d))
             .attr("width", xScale.bandwidth())
-            .attr("height", d => {
-                return isAttr ?
-                yScale(d.attributes[attributeName]) :
-                yScale(d[attributeName]);
-            });
+            .attr("height", d => barHeight(d) + 1)
+            .style("fill", (_, i) => this.getColorForEntity(data, i));
+
+        selection.select("svg")
+            .append("g")
+            .attr("class", "simAxis")
+            .attr("transform",
+                `translate(${this.axisWidth - 1 + this.svgPadding}, ${this.chartHeight + 1 + this.svgPadding})`)
+            .call(xAxis)
+            .selectAll('text')
+            .style('text-anchor', 'end')
+            .attr('dx', '-.8em')
+            .attr('dy', '.15em')
+            .attr('transform', 'rotate(-65)');
     }
+
+    getColorForEntity(entityData, index) {
+        return (entityData[index].type == "player") ?
+            d3.schemeTableau10[index] :
+            d3.interpolateViridis(index / entityData.length);
+    }
+
 }

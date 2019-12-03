@@ -1,13 +1,33 @@
-let coll = document.getElementsByClassName("collapsible");
+// Final Project
+// CS 5890 - Data Visualization
+// Suzie Rhodes, Jonathan Petersen
 
-for (let i = 0; i < coll.length; i++) {
-    coll[i].addEventListener("click", function() {
+function updateCollapsibles(button, displayStyle = "block") {
+
+    let content = button.nextElementSibling;
+
+    // Toggle Visibility
+    content.style.display = (button.classList.contains("active")) ?
+        displayStyle :
+        "none";
+}
+
+function assignHandler(element, displayStyle) {
+
+    // Add the handler
+    element.addEventListener("click", function () {
         this.classList.toggle("active");
-        let content = this.nextElementSibling;
-        if (content.style.display === "block") {
-            content.style.display = "none";
-        } else {
-            content.style.display = "block";
-        }
+        updateCollapsibles(this, displayStyle);
     });
 }
+
+function visitCollapsible(action) {
+
+    // Visit each element
+    for (element of document.getElementsByClassName("collapsible")) {
+        action(element)
+    }
+}
+
+visitCollapsible(assignHandler);
+visitCollapsible(updateCollapsibles);
