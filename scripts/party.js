@@ -66,6 +66,14 @@ class Party {
                 .attr('id', 'name')
             ;
             memberDiv.append('label')
+                .attr('for', 'level')
+                .text('Level: ')
+            ;
+            memberDiv.append('input')
+                .attr('type', 'text')
+                .attr('id', 'level')
+            ;
+            memberDiv.append('label')
                 .attr('for', 'class')
                 .text('Class: ')
             ;
@@ -143,6 +151,7 @@ class Party {
         // take the stuff from the input elements, create an object with them
         let character = {};
         character['Name'] = document.getElementById('name').value;
+        character['Level'] = document.getElementById('level').value;
         character['Class'] = document.getElementById('classSelect').value;
         character['CON'] = document.getElementById('CON').value;
         character['STR'] = document.getElementById('STR').value;
@@ -185,6 +194,10 @@ class Party {
             .text(m => `${m.Name} the ${m.Class}`)
         ;
         groups.append('p')
+            .text(m => `Level: ${m.Level}`)
+            .style('font-weight', 'bold')
+        ;
+        groups.append('p')
             .text(m => `CON: ${m.CON},  STR: ${m.STR},  DEX: ${m.DEX},  WIS: ${m.WIS},  INT: ${m.INT},  CHA: ${m.CHA}`)
         ;
         groups.append('button')
@@ -222,6 +235,7 @@ class Party {
 
         this.addPartyMember({
             Name: "Barbara",
+            Level: 7,
             Class: "Barbarian",
             STR: 20,
             DEX: 11,
@@ -233,6 +247,7 @@ class Party {
 
         this.addPartyMember({
             Name: "Claire",
+            Level: 7,
             Class: "Cleric",
             STR: 14,
             DEX: 14,
@@ -244,6 +259,7 @@ class Party {
 
         this.addPartyMember({
             Name: "Locke",
+            Level: 6,
             Class: "Warlock",
             STR: 8,
             DEX: 16,
@@ -255,6 +271,7 @@ class Party {
 
         this.addPartyMember({
             Name: "Wiz",
+            Level: 7,
             Class: "Wizard",
             STR: 8,
             DEX: 8,
@@ -266,6 +283,7 @@ class Party {
 
         this.addPartyMember({
             Name: "Rogue",
+            Level: 6,
             Class: "Rogue",
             STR: 12,
             DEX: 18,

@@ -1,0 +1,9 @@
+Suzie:
+add a level to the player
+monster selection/occlusion stuff
+move selected monster table up
+Jonathan:
+revamp simulation charts
+style pass
+monster selection from user
+leave random monsters as a checkbox
