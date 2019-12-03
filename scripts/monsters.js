@@ -9,7 +9,8 @@ class Monsters {
     constructor(monsterData) {
         // read in data from file
         this.monsters = monsterData;
-        this.selectedMonsters = [];
+        this.userSelectedMonsters = [];
+        this.monstersToDisplay = [];
 
         this.axisOptions = [
             { json: "armor-class", "option-text": "AC" },
@@ -39,6 +40,13 @@ class Monsters {
             .append('div')
             .attr('id', 'monstersGraphsDiv')
         ;
+
+        this.monstersChosenDiv = d3.select('#monsters')
+            .append('div')
+            .attr('id', 'monstersChosenDiv')
+            .style('width', '100%')
+        ;
+
         this.monstersSelectDiv = d3.select('#monsters')
             .append('div')
             .attr('id', 'monstersSelectDiv')
@@ -212,11 +220,27 @@ class Monsters {
             .enter()
             .append('circle')
             .attr('class', 'bigGraphCircle')
-            .attr('r', '5')
+            .attr('r', '4')
             .attr('cx', m => xScale(m.attributes[xAxisValue]))
             .attr('cy', m => (this.screenWidth / 2) - (yScale(m.attributes[yAxisValue])+xAxisHeight))
-            .on('click', d => this.selectMonster())
         ;
+        // add the brush
+        let brush = d3.brush().extent([[yAxisWidth, this.margin.top],[(this.screenWidth/2)-this.margin.left-this.margin.right, (this.screenWidth/2)-xAxisHeight]]).on("end", d => {
+            let range = d3.event.selection;
+            this.monstersToDisplay = [];
+            let svgForY = document.getElementById('bigGraphSVG').getBoundingClientRect();
+            bigGraphSVG.selectAll('circle')._groups[0].forEach(dot => {
+                let dotX = dot.getBoundingClientRect().left - yAxisWidth;
+                let dotY = Math.abs((svgForY.height - dot.getBoundingClientRect().bottom + svgForY.top) - svgForY.width);
+                if (dotX >= range[0][0] && dotX <= range[1][0]) {
+                    if (dotY >= range[0][1] && dotY <= range[1][1]) {
+                        this.monstersToDisplay.push(dot.__data__);
+                    }
+                }
+            });
+            this.displaySelectedMonsters();
+        });
+        bigGraphSVG.append("g").attr("class", "brush").call(brush);
     }
 
     /**
@@ -287,34 +311,53 @@ class Monsters {
                 .data(data.values)
                 .enter()
                 .append('circle')
-                .attr('r', '3')
+                .attr('r', '2')
                 .attr('cx', m => xScale(m.attributes[xAxisValue]))
                 .attr('cy', m => svgWidth - yScale(m.attributes[yAxisValue])-wiggleRoom.bottom)
-                .on('click', d => this.selectMonster())
             ;
+            // add the brush, but maybe later
+            // let brush = d3.brush().extent([[wiggleRoom.side, 0],[svgWidth, (svgWidth-wiggleRoom.bottom)]]).on("end", d => {
+            //     let range = d3.event.selection;
+            //     console.log(range);
+            // });
+            // svg.append("g").attr("class", "brush").call(brush);
         }
     }
 
     /**
-     * Handler for selecting monsters on the charts.
+     * Display a table of monsters selected from the chart
+     */
+    displaySelectedMonsters() {
+        console.log('make a table for', this.monstersToDisplay);
+        document.getElementById('monstersSelectDiv').innerHTML = '';
+        if (this.monstersToDisplay) {
+            let table = document.createElement('table');
+            document.getElementById('monstersSelectDiv').appendChild(table);
+            this.generateSelectTable(table, this.monstersToDisplay);
+            this.generateTableHead(table, this.tableAttributes.map(v => v['option-text']));
+        }
+    }
+
+    /**
+     * Handler for selecting monsters from the table
      */
     selectMonster() {
         // let selectedCircle = d3.event.target;
         // gotta figure out how to highlight the monsters that are selected
         let selectedMonster = d3.event.target.__data__;
-        this.selectedMonsters.push(selectedMonster);
-        this.displaySelectedMonsters()
+        this.userSelectedMonsters.push(selectedMonster);
+        this.displayChosenMonsters()
     }
 
     /**
      * Build up the table for showing selected monsters.
      */
-    displaySelectedMonsters() {
-        document.getElementById('monstersSelectDiv').innerHTML = '';
-        if (this.selectedMonsters) {
+    displayChosenMonsters() {
+        document.getElementById('monstersChosenDiv').innerHTML = '';
+        if (this.userSelectedMonsters) {
             let table = document.createElement('table');
-            document.getElementById('monstersSelectDiv').appendChild(table);
-            this.generateTable(table, this.selectedMonsters);
+            document.getElementById('monstersChosenDiv').appendChild(table);
+            this.generateChosenTable(table, this.userSelectedMonsters);
             this.generateTableHead(table, this.tableAttributes.map(v => v['option-text']));
         }
     }
@@ -341,7 +384,7 @@ class Monsters {
     /**
      * Generate the table that holds selected monsters.
      */
-    generateTable(table, data) {
+    generateSelectTable(table, data) {
         for (let monster of data) {
             // console.log(monster);
             let row = table.insertRow();
@@ -360,23 +403,76 @@ class Monsters {
                     }
                 }
             }
-            // and add a delete button at the end
-            let cell = row.insertCell();
-            let delBtn = document.createElement('input');
-            delBtn.type = 'button';
-            delBtn.className = 'delete';
-            delBtn.value = 'Delete';
-            delBtn.onclick = (d => {
-                if (this.selectedMonsters.length === 1) {
-                    this.selectedMonsters = [];
-                } else {
-                    // this doesn't work
-                    let toDeleteName = d.target.parentElement.parentElement.cells[0].childNodes[0].nodeValue;
-                    this.selectedMonsters = this.selectedMonsters.filter(m => m.name !== toDeleteName);
-                }
-                this.displaySelectedMonsters();
-            });
-            cell.appendChild(delBtn);
+            this.addSelectButton(row);
         }
+    }
+
+    /**
+     * Generate the table that holds selected monsters.
+     */
+    generateChosenTable(table, data) {
+        for (let monster of data) {
+            // console.log(monster);
+            let row = table.insertRow();
+            for (let attr in monster) {
+                if (this.tableAttributes.map(v => v.json).includes(attr)){
+                    let cell = row.insertCell();
+                    let text = document.createTextNode(monster[attr]);
+                    cell.appendChild(text);
+                } else if (attr === 'attributes') {
+                    for (let score in monster[attr]) {
+                        if (this.tableAttributes.map(v => v.json).includes(score)) {
+                            let cell = row.insertCell();
+                            let text = document.createTextNode(monster.attributes[score]);
+                            cell.appendChild(text);
+                        }
+                    }
+                }
+            }
+            this.addDeleteButton(row);
+        }
+    }
+
+    addDeleteButton(row) {
+        let cell = row.insertCell();
+        let delBtn = document.createElement('input');
+        delBtn.type = 'button';
+        delBtn.className = 'delete';
+        delBtn.value = 'Delete';
+        delBtn.onclick = (d => {
+            if (this.userSelectedMonsters.length === 1) {
+                this.userSelectedMonsters = [];
+                let selects = document.getElementsByClassName('selectBtn');
+                for (let i = 0; i < selects.length; i++) {
+                    selects[i].disabled = false;
+                }
+            } else {
+                let toDeleteName = d.target.parentElement.parentElement.cells[0].childNodes[0].nodeValue;
+                let selects = document.getElementsByClassName('selectBtn');
+                for (let i = 0; i < selects.length; i++) {
+                    if (selects[i].parentElement.parentElement.cells[0].childNodes[0].nodeValue == toDeleteName) {
+                        selects[i].disabled = false;
+                    }
+                }
+                this.userSelectedMonsters = this.userSelectedMonsters.filter(m => m.name !== toDeleteName);
+            }
+            this.displayChosenMonsters();
+        });
+        cell.appendChild(delBtn);
+    }
+
+    addSelectButton(row) {
+        let cell = row.insertCell();
+        let selectBtn = document.createElement('input');
+        selectBtn.type = 'button';
+        selectBtn.className = 'selectBtn';
+        selectBtn.value = 'Select';
+        selectBtn.onclick = (s => {
+            s.target.disabled = true;
+            let toSelectName = s.target.parentElement.parentElement.cells[0].childNodes[0].nodeValue;
+            this.userSelectedMonsters = [...this.userSelectedMonsters, this.monstersToDisplay.find(m => m.name === toSelectName)];
+            this.displayChosenMonsters();
+        });
+        cell.appendChild(selectBtn);
     }
 }
