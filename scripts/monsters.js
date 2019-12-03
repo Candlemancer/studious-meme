@@ -333,7 +333,7 @@ class Monsters {
         if (this.monstersToDisplay) {
             let table = document.createElement('table');
             document.getElementById('monstersSelectDiv').appendChild(table);
-            this.generateTable(table, this.monstersToDisplay, this.addSelectButton);
+            this.generateSelectTable(table, this.monstersToDisplay);
             this.generateTableHead(table, this.tableAttributes.map(v => v['option-text']));
         }
     }
@@ -357,7 +357,7 @@ class Monsters {
         if (this.userSelectedMonsters) {
             let table = document.createElement('table');
             document.getElementById('monstersChosenDiv').appendChild(table);
-            this.generateTable(table, this.userSelectedMonsters, this.addDeleteButton);
+            this.generateChosenTable(table, this.userSelectedMonsters);
             this.generateTableHead(table, this.tableAttributes.map(v => v['option-text']));
         }
     }
@@ -384,7 +384,7 @@ class Monsters {
     /**
      * Generate the table that holds selected monsters.
      */
-    generateTable(table, data, buttonAddFunction) {
+    generateSelectTable(table, data) {
         for (let monster of data) {
             // console.log(monster);
             let row = table.insertRow();
@@ -403,7 +403,33 @@ class Monsters {
                     }
                 }
             }
-            buttonAddFunction(row);
+            this.addSelectButton(row);
+        }
+    }
+
+    /**
+     * Generate the table that holds selected monsters.
+     */
+    generateChosenTable(table, data) {
+        for (let monster of data) {
+            // console.log(monster);
+            let row = table.insertRow();
+            for (let attr in monster) {
+                if (this.tableAttributes.map(v => v.json).includes(attr)){
+                    let cell = row.insertCell();
+                    let text = document.createTextNode(monster[attr]);
+                    cell.appendChild(text);
+                } else if (attr === 'attributes') {
+                    for (let score in monster[attr]) {
+                        if (this.tableAttributes.map(v => v.json).includes(score)) {
+                            let cell = row.insertCell();
+                            let text = document.createTextNode(monster.attributes[score]);
+                            cell.appendChild(text);
+                        }
+                    }
+                }
+            }
+            this.addDeleteButton(row);
         }
     }
 
@@ -416,8 +442,18 @@ class Monsters {
         delBtn.onclick = (d => {
             if (this.userSelectedMonsters.length === 1) {
                 this.userSelectedMonsters = [];
+                let selects = document.getElementsByClassName('selectBtn');
+                for (let i = 0; i < selects.length; i++) {
+                    selects[i].disabled = false;
+                }
             } else {
                 let toDeleteName = d.target.parentElement.parentElement.cells[0].childNodes[0].nodeValue;
+                let selects = document.getElementsByClassName('selectBtn');
+                for (let i = 0; i < selects.length; i++) {
+                    if (selects[i].parentElement.parentElement.cells[0].childNodes[0].nodeValue == toDeleteName) {
+                        selects[i].disabled = false;
+                    }
+                }
                 this.userSelectedMonsters = this.userSelectedMonsters.filter(m => m.name !== toDeleteName);
             }
             this.displayChosenMonsters();
@@ -432,7 +468,10 @@ class Monsters {
         selectBtn.className = 'selectBtn';
         selectBtn.value = 'Select';
         selectBtn.onclick = (s => {
-            this.displaySelectedMonsters();
+            s.target.disabled = true;
+            let toSelectName = s.target.parentElement.parentElement.cells[0].childNodes[0].nodeValue;
+            this.userSelectedMonsters = [...this.userSelectedMonsters, this.monstersToDisplay.find(m => m.name === toSelectName)];
+            this.displayChosenMonsters();
         });
         cell.appendChild(selectBtn);
     }
