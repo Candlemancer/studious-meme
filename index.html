@@ -6,30 +6,35 @@
         <link rel="stylesheet" href="style.css" />
 
         <script src="https://d3js.org/d3.v5.min.js"></script>
-        <script src="scripts/entity.js" defer></script>
+        <script src="scripts/entity.js"></script>
         <script src="scripts/collapse.js" defer></script>
-        <script src="scripts/party.js" defer></script>
-        <script src="scripts/monsters.js" defer></script>
-        <script src="scripts/simulator.js" defer></script>
+        <script src="scripts/party.js"></script>
+        <script src="scripts/monsters.js"></script>
+        <script src="scripts/simulator.js"></script>
         <script src="scripts/simulationPanel.js" defer></script>
         <script src="scripts/script.js" defer></script>
     </head>
     <body>
-        <button type="button" class="collapsible">Party</button>
-        <div class="content" id="party">
+        <div id="intro">
+            <h1>Dungeons and Dragons Monster Mashup</h1>
+            <p>Made by Suzie and Jonathan <br/>
+            <a href="https:\\github.com\candlemancer\studious-meme">Github</a>
+            </p>
         </div>
-        <button type="button" class="collapsible">Simulation</button>
-        <div class="content" id="simulation">
-            <button id="beginSimulation" onclick="simulateBattle()">Fight!</button>
-            <div>
-                <div class="simResults" id="simLeft"></div>
-                <div class="simResults" id="simMid"></div>
-                <div class="simResults" id="simRight"></div>
-            </div>
-        </div>
-        <button type="button" class="collapsible">Monsters</button>
-        <div class="content" id="monsters">
-        </div>
+
+        <button type="button" class="collapsible active">Choose Your Party</button>
+        <div class="content" id="party"></div>
+
+        <hr/>
+
+        <button type="button" class="collapsible">Choose Some Monsters</button>
+        <div class="content" id="monsters"></div>
+
+        <hr/>
+
+        <button type="button" class="collapsible active">Simulate Battles</button>
+        <div class="content" id="simulation"></div>
+
 
     </body>
 </html>

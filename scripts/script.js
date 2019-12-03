@@ -1,7 +1,6 @@
 
 // setup the party panel
 let party = new Party();
-party.addDefaultParty();
 
 // Setup the monster panel
 let monsterPanel;
@@ -20,6 +19,7 @@ let simPanel = new SimulationPanel();
 function simulateBattle() {
 
     let playerRoster = party.getPartyMembers().map(p => new Entity(p))
+    // let monsterRoster = monsterPanel.getSelectedMonsters().map(p => new Entity(p))
     let monsterRoster = getRandomMonsters().map(m => new Entity(m));
 
     // console.log("Preparing fight between ", playerRoster, " and ", monsterRoster);

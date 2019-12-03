@@ -1,44 +1,43 @@
-/* style copied and pasted from a w3schools tutorial */
+/*
+ * Final Project
+ * CS 5890 - Data Visualization
+ * Suzie Rhodes, Jonathan Petersen
+*/
 
-/* Style the button that is used to open and close the collapsible content */
-.collapsible {
-    background-color: #eee;
-    color: #444;
-    cursor: pointer;
-    padding: 18px;
-    width: 100%;
-    border: none;
-    text-align: left;
-    outline: none;
-    font-size: 15px;
-}
-
-/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-.active, .collapsible:hover {
-    background-color: #ccc;
-}
-
-/* Style the collapsible content. Note: hidden by default */
-.content {
-    padding: 0 18px;
-    display: none;
-    overflow: hidden;
-    background-color: #f1f1f1;
-}
-
-/* and here's the stuff I'm writing */
-.button {
-    margin: 10px;
-    display: block;
+/* Base Rules */
+table {
+    border-spacing: 15px;
 }
 
 input, select {
     display: block;
 }
 
+/* Layout Rules */
+#intro {
+    width: 80%;
+    margin: auto;
+    text-align: center;
+}
+
+#intro h1 {
+    margin-bottom: 3px;
+}
+
+#intro p {
+    margin-top: 0px;
+}
+
+.playerStats {
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+
 .left-col {
     width: 50%;
     float: left;
+    clear: left;
 }
 
 .right-col {
@@ -46,11 +45,133 @@ input, select {
     float: right;
 }
 
-table {
-    border-spacing: 15px;
+#monstersGraphsDiv {
+    overflow: hidden;
 }
 
-.simResults {
-  float: left;
-  width: 33%;
+.content {
+    text-align: center;
+    min-height: 250px;
+}
+
+.scatterControls {
+    margin: 5px;
+}
+
+.controls {
+    text-align: center;
+    height: 100px;
+}
+
+.controls button {
+    margin: 10px;
+}
+
+#personInput label {
+    width: 50%;
+    text-align: right;
+    float: left;
+    clear: left;
+    line-height: 100%;
+}
+
+#personInput input,
+#personInput select {
+    margin: 10px;
+}
+
+.scatterControls label {
+    width: 50%;
+    text-align: right;
+    float: left;
+}
+
+#simulation {
+    display: flex;
+    flex-direction: column;
+}
+
+.simRow {
+    display: flex;
+}
+
+.simCol {
+    flex: 50%;
+}
+
+/* Modules Rules */
+.collapsible {
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+}
+
+.content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+}
+
+#party .member {
+    width: 200px;
+    display: inline-block;
+    text-align: center;
+    border: 1px solid #3F3F3F;
+    margin: 0 10px;
+}
+
+/* State Rules */
+.collapsible {
+    background-color: #DDDDDD;
+    color: hsl(0, 0%, 27%);
+}
+
+.active {
+    background-color: #555555;
+    color: #FFFFFF;
+}
+
+.collapsible:hover {
+    background-color: #3F3F3F;
+    color: #EEEEEE;
+}
+
+/* Theme Rules */
+h1 {
+    font-family: Tahoma, Helvetica, sans-serif;
+}
+
+.controls button{
+    font-size: 16px;
+}
+
+button.collapsible {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.content {
+    /* Style the collapsible content. Note: hidden by default */
+    background-color: #f1f1f1;
+}
+
+.playerStats p {
+    margin: 3px 0;
+    font-family: "Lucida Console", Monaco, monospace;
+}
+
+.member button {
+    margin: 10px;
+}
+
+#intro p {
+    font-size: 18px;
+}
+
+.simSummary {
+    font-size: 24px;
 }

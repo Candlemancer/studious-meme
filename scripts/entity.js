@@ -1,3 +1,6 @@
+// Final Project
+// CS 5890 - Data Visualization
+// Suzie Rhodes, Jonathan Petersen
 
 /**
  * The Entity Class is the main data representation used by the simulator.
@@ -5,19 +8,6 @@
  * can be used to represent either a Player Character or a monster.
  */
 class Entity {
-  // name;
-  // currentHP;
-  // maxHP;
-  // armorClass;
-  // attributes;
-  // attackDice = {
-  //   d4: 0,
-  //   d6: 0,
-  //   d8: 0,
-  //   d10: 0,
-  //   d12: 0,
-  // };
-  // proficiencyBonus;
 
   /**
    * Fills out the entity data based on input gathered from the user or from the
@@ -49,6 +39,7 @@ class Entity {
         wis: Math.floor((entityData['WIS'] - 10) / 2),
         cha: Math.floor((entityData['CHA'] - 10) / 2),
       };
+
     this.attackDice = {
       d4: 0,
       d6: 0,
@@ -56,6 +47,7 @@ class Entity {
       d10: 0,
       d12: 0,
     };
+
     this.attackDice.d6 += 2;
 
     this.proficiencyBonus = 4; // TODO
