@@ -322,7 +322,6 @@ class Monsters {
             .key(k => k[partitionValue])
             .entries(this.monsters)
         ;
-        // always update the small multiples
         document.getElementById('smallMultiplesDivForSVGs').innerHTML = '';
         // make the scales and axes
         let xScale = d3.scaleLinear()
@@ -378,12 +377,24 @@ class Monsters {
                 .attr('cy', m => svgWidth - yScale(m.attributes[yAxisValue])-wiggleRoom.bottom)
                 .style('fill', m => this.getColorForMonster(m))
             ;
-            // add the brush, but maybe later
-            // let brush = d3.brush().extent([[wiggleRoom.side, 0],[svgWidth, (svgWidth-wiggleRoom.bottom)]]).on("end", d => {
-            //     let range = d3.event.selection;
-            //     console.log(range);
-            // });
-            // svg.append("g").attr("class", "brush").call(brush);
+            // add the brush,
+            let brush = d3.brush().extent([[wiggleRoom.side, 0],[svgWidth, (svgWidth-wiggleRoom.bottom)]]).on("end", d => {
+                let range = d3.event.selection;
+                this.monstersToDisplay = [];
+                // go through each dot in that svg
+                // see if it is in the range
+                svg.selectAll('circle')._groups[0].forEach(dot => {
+                    let dotX = dot.cx.baseVal.value;
+                    let dotY = dot.cy.baseVal.value;
+                    if (dotX >= range[0][0] && dotX <= range[1][0]) {
+                        if (dotY >= range[0][1] && dotY <= range[1][1]) {
+                            this.monstersToDisplay.push(dot.__data__);
+                        }
+                    }
+                });
+                this.displaySelectedMonsters();
+            });
+            svg.append("g").attr("class", "brush").call(brush);
         }
 
         // Redraw any selected monsters

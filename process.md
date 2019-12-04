@@ -199,10 +199,10 @@ To be finished by Nov 17:
 To be finished by Nov 24:
 * Have fully functioning simulation (Done!)
 * Display summary statistics (Done!)
-* This week has a little less stuff because it's Thanksgiving
+* This week has a little less stuff because it's Thanksgiving (jk, it's not, I'm bad at time)
 
 To be finished by Nov 31:
-* Monster comparison charts with brushing and linking (60% Complete)
+* Monster comparison charts with brushing and linking (Done!)
 * Summary statistic charts (20% Complete)
 
 To be finished by Dec 6:
@@ -211,3 +211,6 @@ To be finished by Dec 6:
 
 ## Schedule Update at Prototype 1
 As of now we're on track to finish the project on schedule! There are some categories that we hoped to have done by now that aren't, but there's also a lot of work we didn't anticipate starting yet that's already done. Progress to date has mostly been in gathering and sanitizing the data, getting basic player input, building the simulation component, and setting up the tools we need to visualize our data. From here on out, the work should mostly be focused on making sure we chart the right things and in the right way, improving the design of the site, and working on stretch goals such as specific monster attacks or whatnot.
+
+## Design update
+We didn't consider how much occlusion would occur in the scatterplots we intended to use to select monsters from. To address this, we decided to add a brush to the scatterplot. Monsters within the range of the brush will be displayed in a table below the scatterplots, and can be selected from that table.
