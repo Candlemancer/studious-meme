@@ -319,7 +319,7 @@ class Party {
         });
 
         this.addPartyMember({
-            Name: "Rogue",
+            Name: "Rodger",
             Level: 6,
             Class: "Rogue",
             STR: 12,
