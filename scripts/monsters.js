@@ -322,6 +322,7 @@ class Monsters {
             .key(k => k[partitionValue])
             .entries(this.monsters)
         ;
+        nestedData = this.sortData(nestedData, partitionValue);
         document.getElementById('smallMultiplesDivForSVGs').innerHTML = '';
         // make the scales and axes
         let xScale = d3.scaleLinear()
@@ -428,6 +429,57 @@ class Monsters {
             this.generateSelectTable(table, this.monstersToDisplay);
             this.generateTableHead(table, this.tableAttributes.map(v => v['option-text']));
         }
+    }
+
+    sortData(nestedData, partitionValue) {
+        if (partitionValue === 'alignment') {
+            let orderedAlignments = [
+                'Lawful Good',
+                'Neutral Good',
+                'Chaotic Good',
+                'Lawful Neutral',
+                'Neutral',
+                'Chaotic Neutral',
+                'Lawful Evil',
+                'Neutral Evil',
+                'Chaotic Evil',
+                'Any Alignment',
+                'Unaligned',
+                'Any Non-Good Alignment',
+                'Any Evil Alignment',
+                'Any Non-Lawful Alignment',
+                'Any Chaotic Alignment'
+            ];
+            let newOrder = [];
+            orderedAlignments.forEach(a => {
+                nestedData.forEach(g => {
+                    if(g.key === a) {
+                        newOrder.push(g);
+                    }
+                });
+            });
+            return newOrder;
+        }
+        if (partitionValue === 'monster-size') {
+            let orderedSize = [
+                'Tiny',
+                'Small',
+                'Medium',
+                'Large',
+                'Huge',
+                'Gargantuan'
+            ];
+            let newOrder = [];
+            orderedSize.forEach(s => {
+                nestedData.forEach(g => {
+                    if(g.key === s) {
+                        newOrder.push(g);
+                    }
+                });
+            });
+            return newOrder;
+        }
+        return nestedData;
     }
 
     /**
