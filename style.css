@@ -18,6 +18,10 @@ input, select {
     display: block;
 }
 
+iframe {
+    margin: 50px auto;
+}
+
 /* Layout Rules */
 #intro {
     width: 80%;
@@ -184,4 +188,8 @@ button.collapsible {
 
 .simSummary {
     font-size: 24px;
+}
+
+.footer {
+    color: #555555;
 }
