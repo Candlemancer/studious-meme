@@ -70,6 +70,11 @@ class Monsters {
      * Draws the big and small graphs on the Monster Panel.
      */
     createMonsterGraphs() {
+        this.monsterGraphsDiv.append('div')
+            .append('p')
+            .text('The monsters contained in the selected area will be displayed below the charts and each monster will have a button that adds them to the monster roster.')
+        ;
+
         let bigGraphColumn = this.monsterGraphsDiv
             .append('div')
             .attr('class', 'left-col')
@@ -145,12 +150,10 @@ class Monsters {
 
         // append svg to bigGraphColumn
         bigGraphColumn.append('svg')
-            .attr('width', this.screenWidth / 2)
+            .attr('width', (this.screenWidth / 2) - this.margin.left - this.margin.right)
             .attr('height', this.screenWidth / 2)
             .attr('id', 'bigGraphSVG')
         ;
-
-
 
         smallMultiplesControls.append('h2')
             .text('Monster Subgroups')
@@ -283,8 +286,8 @@ class Monsters {
             this.monstersToDisplay = [];
             let svgForY = document.getElementById('bigGraphSVG').getBoundingClientRect();
             bigGraphSVG.selectAll('circle')._groups[0].forEach(dot => {
-                let dotX = dot.getBoundingClientRect().left - yAxisWidth;
-                let dotY = Math.abs((svgForY.height - dot.getBoundingClientRect().bottom + svgForY.top) - svgForY.width);
+                let dotX = xScale(dot.__data__.attributes[xAxisValue]);
+                let dotY = ((this.screenWidth / 2) - yScale(dot.__data__.attributes[yAxisValue]) - xAxisHeight);
                 if (dotX >= range[0][0] && dotX <= range[1][0]) {
                     if (dotY >= range[0][1] && dotY <= range[1][1]) {
                         this.monstersToDisplay.push(dot.__data__);
