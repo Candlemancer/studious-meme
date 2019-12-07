@@ -36,6 +36,11 @@ class Monsters {
 
         this.margin = {top: 30, right: 20, bottom: 30, left: 20}
 
+        this.explanationDiv = d3.select('#monsters')
+            .append('div')
+            .attr('id', 'monstersLegendDiv')
+        ;
+
         this.monsterGraphsDiv = d3.select('#monsters')
             .append('div')
             .attr('id', 'monstersGraphsDiv')
@@ -70,9 +75,13 @@ class Monsters {
      * Draws the big and small graphs on the Monster Panel.
      */
     createMonsterGraphs() {
-        this.monsterGraphsDiv.append('div')
+        this.explanationDiv
             .append('p')
             .text('The monsters contained in the selected area will be displayed below the charts and each monster will have a button that adds them to the monster roster.')
+        ;
+        this.explanationDiv
+            .append('p')
+            .text('AC=Armor Class; HP=Hit Points; STR=Strength; DEX=Dexterity; CON=Constitution; INT=Intelligence; WIS=Wisdom; CHA=Charisma')
         ;
 
         let bigGraphColumn = this.monsterGraphsDiv
