@@ -218,13 +218,14 @@ class Monsters {
         let yAxisValue = document.getElementById('yAxisSelect').value;
         let xAxisHeight = 22;
         let yAxisWidth = 20;
+        let labelSpace = 24;
 
         let bigGraphSVG = d3.select('#bigGraphSVG');
         // remove what's there so we can make the new chart
         document.getElementById('bigGraphSVG').innerHTML = '';
 
         let xScale = d3.scaleLinear()
-            .range([yAxisWidth, (this.screenWidth / 2) - this.margin.left - this.margin.right])
+            .range([yAxisWidth+labelSpace, (this.screenWidth / 2) - this.margin.left - this.margin.right])
             .domain([d3.min(
                 this.monsters.map(m => m.attributes[xAxisValue])
             )-1, d3.max(
@@ -232,7 +233,7 @@ class Monsters {
             )+1])
         ;
         let yScale = d3.scaleLinear()
-            .range([0, (this.screenWidth / 2) - this.margin.top - this.margin.bottom])
+            .range([0, (this.screenWidth / 2) - this.margin.top - this.margin.bottom - labelSpace])
             .domain([d3.min(
                 this.monsters.map(m => m.attributes[yAxisValue])
             )-1, d3.max(
@@ -245,7 +246,7 @@ class Monsters {
         ;
         bigGraphSVG.append('g')
             .attr('class', 'x-axis')
-            .attr('transform', `translate(0, ${(this.screenWidth / 2)-xAxisHeight})`)
+            .attr('transform', `translate(0, ${(this.screenWidth / 2)-xAxisHeight - labelSpace})`)
             .call(xAxis)
             .selectAll('text')
             .style('text-anchor', 'end')
@@ -253,19 +254,34 @@ class Monsters {
             .attr('dy', '.15em')
             .attr('transform', 'rotate(-65)');
         ;
+        bigGraphSVG.append('text')
+            .attr('class', 'axis-label')
+            .attr('x', (this.screenWidth / 4))
+            .attr('y', (this.screenWidth / 2) - (labelSpace / 2))
+            .style('text-anchor', 'middle')
+            .text(this.axisOptions.find(o => o.json === xAxisValue)['option-text'])
+        ;
         // add y-axis
         let yAxis = d3.axisLeft(yScale)
             .tickFormat((d,i) => d)
         ;
         bigGraphSVG.append('g')
             .attr('class', 'y-axis')
-            .attr('transform', `translate(${yAxisWidth}, ${(this.screenWidth / 2)-xAxisHeight}) scale(1,-1)`)
+            .attr('transform', `translate(${yAxisWidth+labelSpace}, ${(this.screenWidth / 2)-xAxisHeight - labelSpace}) scale(1,-1)`)
             .call(yAxis)
             .selectAll('text')
             .style('text-anchor', 'end')
             .attr('dx', '0em')
             .attr('dy', '.5em')
             .attr('transform', 'scale(1,-1)')
+        ;
+        bigGraphSVG.append('text')
+            .attr('class', 'axis-label')
+            .attr('x', labelSpace / 2)
+            .attr('y', this.screenWidth / 4)
+            .style('text-anchor', 'middle')
+            .attr('transform', `rotate(270, ${labelSpace/2}, ${this.screenWidth/4})`)
+            .text(this.axisOptions.find(o => o.json === yAxisValue)['option-text'])
         ;
 
         // add the dots
@@ -276,18 +292,18 @@ class Monsters {
             .attr('class', 'bigGraphCircle')
             .attr('r', '4')
             .attr('cx', m => xScale(m.attributes[xAxisValue]))
-            .attr('cy', m => (this.screenWidth / 2) - (yScale(m.attributes[yAxisValue])+xAxisHeight))
+            .attr('cy', m => (this.screenWidth / 2) - (yScale(m.attributes[yAxisValue])+xAxisHeight+labelSpace))
             .style('fill', d => this.getColorForMonster(d))
         ;
 
         // add the brush
-        let brush = d3.brush().extent([[yAxisWidth, this.margin.top],[(this.screenWidth/2)-this.margin.left-this.margin.right, (this.screenWidth/2)-xAxisHeight]]).on("end", d => {
+        let brush = d3.brush().extent([[yAxisWidth+labelSpace, this.margin.top],[(this.screenWidth/2)-this.margin.left-this.margin.right, (this.screenWidth/2)-xAxisHeight - labelSpace]]).on("end", d => {
             let range = d3.event.selection;
             this.monstersToDisplay = [];
             let svgForY = document.getElementById('bigGraphSVG').getBoundingClientRect();
             bigGraphSVG.selectAll('circle')._groups[0].forEach(dot => {
                 let dotX = xScale(dot.__data__.attributes[xAxisValue]);
-                let dotY = ((this.screenWidth / 2) - yScale(dot.__data__.attributes[yAxisValue]) - xAxisHeight);
+                let dotY = ((this.screenWidth / 2) - yScale(dot.__data__.attributes[yAxisValue]) - xAxisHeight - labelSpace);
                 if (dotX >= range[0][0] && dotX <= range[1][0]) {
                     if (dotY >= range[0][1] && dotY <= range[1][1]) {
                         this.monstersToDisplay.push(dot.__data__);
