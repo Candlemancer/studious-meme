@@ -193,3 +193,7 @@ button.collapsible {
 .footer {
     color: #555555;
 }
+
+.axis-label {
+    font-size: small;
+}
